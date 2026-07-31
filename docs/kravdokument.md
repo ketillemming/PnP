@@ -1,7 +1,8 @@
-# Kravdokument — Medarbejder-uddannelsesportal (v0.2, udkast)
+# Kravdokument — Medarbejder-uddannelsesportal (v0.3, udkast)
 
-Status: **Udkast**. Afventer svar fra GoLearn og RGD (Plan2Learn) samt
-afklaring af de resterende åbne spørgsmål i afsnit 9. Antagelser truffet for
+Status: **Udkast**. Svar modtaget fra Plan2Learn (RGD) — møde afventes for
+detaljer. Afventer stadig svar fra GoLearn, samt afklaring af de resterende
+åbne spørgsmål i afsnit 9. Antagelser truffet for
 at kunne beskrive en sammenhængende v1 er markeret tydeligt og bør bekræftes
 eller ændres, før der bygges videre på dem — samme princip som i det
 tidligere kundeonboarding-projekt.
@@ -43,8 +44,8 @@ Plan2Learn) samt virksomhedens egne kurser/workshops og evt. tredjeparts­kurser
 
 **Uden for v1 (kandidater til senere):**
 - Tilmelding til eksterne kurser (GoLearn/RGD) direkte i appen — v1 linker
-  videre til udbyderens egen portal (se åbent spørgsmål 1).
-- Notifikationer/påmindelser om deadlines (se åbent spørgsmål 3).
+  videre til udbyderens egen portal (se afsnit 7, RGD/Plan2Learn).
+- Notifikationer/påmindelser om deadlines (se afsnit 9, spørgsmål 2).
 - Fuldautomatisk synkronisering fra GoLearn/RGD, hvis leverandørerne ikke kan
   levere det til v1 — data kan i så fald være manuelt importeret/vedligeholdt
   i en overgangsperiode.
@@ -132,12 +133,26 @@ medarbejder (data-synkronisering), eller forventer de at blive tilgået via
 deep-link/SSO fra vores side, uden statustracking tilbage til os?
 
 ### RGD / Plan2Learn
-**Status:** Kontaktet, afventer specifikation.
-**Åbent:** Findes der virksomheds-adgang (API/eksport) til Plan2Learn-data,
-eller er individuelle medarbejderkoder den eneste adgangsform? Hvis kun
-individuelle koder findes, er en fuld data-synkronisering usandsynlig i v1 —
-mest realistiske fallback er enten periodisk manuel import (fx CSV) eller
-deep-link uden automatisk statustracking.
+**Status:** Svar modtaget. Plan2Learn har erfaring med at udstille kurser via
+webservice/API til kunder, der viser kurser/hold på egen platform — det
+bruges typisk primært til at håndtere **tilmelding, betaling og login**
+gennem Plan2Learn selv, ikke kun til at hente data. De har tilbudt et møde om
+vores konkrete use-case.
+
+**Vigtigt benspænd:** vi logger ikke ind hos Plan2Learn med vores Entra
+ID/SSO — de har deres eget separate login (eget AD). Det betyder tilmelding
+og evt. login til et kursus hos Plan2Learn ikke kan foregå sømløst inde i
+vores portal uden yderligere afklaring (fx en form for kontokobling), og at
+en deep-link/redirect til Plan2Learn er den mest realistiske løsning for
+tilmelding i v1 (se afsnit 9, spørgsmål 1 — nu foreløbigt afklaret for RGDs
+vedkommende).
+
+**Stadig åbent til mødet:** kan de også udstille **fuldførelsesstatus**
+tilbage til os via API (så vi kan vise "gennemført" i vores overblik uden
+manuel indtastning), eller er webservicen kun til visning/tilmelding? Hvis
+kun visning/tilmelding, er periodisk manuel import (fx CSV) eller
+individuel medarbejder-login den mest realistiske fallback for
+statustracking i v1.
 
 ### Egne kurser/workshops
 Oprettes og vedligeholdes direkte i admin/HR-modulet (afsnit 5.2). Ingen
@@ -167,22 +182,32 @@ senere kræver sin egen integration.
 - ~~Hvilke medarbejdergrupper findes, og hvordan vedligeholdes de?~~ → Se
   afsnit 5.1: manuelt i admin-modulet, hierarkisk, valgfrit, mange-til-mange.
 
+**Yderligere afklaret siden v0.2 (Plan2Learn-svar):**
+- ~~Skal medarbejdere kunne tilmelde sig kurser direkte i appen, eller kun se
+  overblikket og blive linket videre?~~ → For RGD/Plan2Learn: **linkes
+  videre** til Plan2Learn til tilmelding, da de ikke deler SSO med os og selv
+  vil håndtere tilmelding/betaling/login. Samme mønster foreslås som default
+  for GoLearn, indtil deres svar bekræfter eller afkræfter det. Egne kurser
+  håndteres fortsat direkte i appen.
+
 **Fortsat åbne:**
-1. Skal medarbejdere kunne tilmelde sig kurser direkte i appen, eller kun se
-   overblikket og blive linket videre til udbyderens egen portal for
-   tilmelding? *(Forslag: egne kurser håndteres i appen, eksterne kurser
-   linkes videre indtil GoLearn/RGD-svar kendes.)*
-2. Hvordan defineres "gennemført" ensartet på tværs af udbydere? *(Forslag:
+1. Hvordan defineres "gennemført" ensartet på tværs af udbydere? *(Forslag:
    kildens egen rapporterede status for GoLearn/RGD; manuel markering af en
-   administrator for egne kurser/workshops.)*
-3. Skal deadline-håndtering/påmindelser for obligatoriske kurser være med i
+   administrator for egne kurser/workshops. For RGD afhænger det af om
+   Plan2Learns webservice også kan levere fuldførelsesstatus, eller kun
+   tilmelding/visning — afklares på det kommende møde.)*
+2. Skal deadline-håndtering/påmindelser for obligatoriske kurser være med i
    v1? *(Forslag: nej, tilføjes i en senere version.)*
-4. Hvem konkret skal have administrator-/HR-adgang (se afsnit 4)?
-5. Skal den tværgående HR-visning (5.3) i v1 kun være en simpel tabel, eller
+3. Hvem konkret skal have administrator-/HR-adgang (se afsnit 4)?
+4. Skal den tværgående HR-visning (5.3) i v1 kun være en simpel tabel, eller
    er der behov for egentlig rapportering/eksport fra start?
-6. **GoLearn-svar afventes:** hvilken integrationsmodel tilbyder de?
-7. **RGD-svar afventes:** findes der virksomheds-adgang til Plan2Learn, eller
-   kun individuelle konti?
+5. **GoLearn-svar afventes:** hvilken integrationsmodel tilbyder de, og kan
+   det følge samme mønster (link til tilmelding) som Plan2Learn?
+6. **RGD/Plan2Learn — møde skal afholdes** for at afklare: kan de levere
+   fuldførelsesstatus via API (ikke kun tilmelding/visning)? Og hvordan
+   løses login-forskellen (separat AD) i praksis for medarbejderne — skal de
+   have et Plan2Learn-login ved siden af Entra ID, eller findes der en
+   kontokoblings-mulighed?
 
 ## 10. Success-kriterier for v1
 
