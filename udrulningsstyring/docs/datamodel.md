@@ -37,6 +37,16 @@ Dataverse for Teams-tabeller. Det er grundlaget for både
   `role`-feltet) er derfor lavet som sin egen custom tabel, `Bruger`, der
   refererer til den rigtige bruger via e-mail. Det er `Bruger`, resten af
   modellen peger på — ikke `systemuser`.
+- **Choice-værdier (tallene) er ligegyldige — men rækkefølgen er ikke.**
+  Værditallene 1, 2, 3 … i tabellerne nedenfor er kun til at vise den
+  ønskede rækkefølge. Opretter I kolonnerne manuelt i Studio, tildeler
+  Dataverse automatisk sine egne tal (typisk 973100000 og opefter) — det er
+  helt fint og skal ikke rettes. Formlerne i `build-guide.md` refererer til
+  valgmulighedernes **navne**, ikke deres tal.
+  Vigtigt: indtast valgmulighederne i den rækkefølge, de står nedenfor.
+  De auto-tildelte tal tælder op i indtastningsrækkefølgen, og for
+  `Aktivitet.Fase` er det dem, der giver den korrekte ADKAR-sortering
+  (A-D-K-A-R) i UI'et.
 
 ## Tabeller
 
