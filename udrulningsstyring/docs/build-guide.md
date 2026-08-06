@@ -24,7 +24,7 @@ ingen se noget i app'en (se "Adgangsstyring" nedenfor).
 
    ```
    BrugerNu = LookUp(Brugere, Email = User().Email);
-   ErAdmin = !IsBlank(BrugerNu) && BrugerNu.Rolle = 'Rolle (Brugere)'.Admin;
+   ErAdmin = !IsBlank(BrugerNu) && BrugerNu.Rolle = 'Rolletype'.Admin;
    ```
 
    `BrugerNu` og `ErAdmin` genberegnes automatisk og kan bruges på alle
@@ -59,7 +59,7 @@ For hver af de 5 faser beregnes andel gennemført:
 ```
 With(
   {AktiviteterIFase: Filter(Aktiviteter, Projekt = ProjektRecord && Fase = <fase-værdi>)},
-  CountRows(Filter(AktiviteterIFase, Status = 'Status (Aktiviteter)'.Gennemført))
+  CountRows(Filter(AktiviteterIFase, Status = 'Aktivitetsstatus'.Gennemført))
     / Max(1, CountRows(AktiviteterIFase))
 )
 ```
@@ -147,7 +147,7 @@ Named formula i `App.Formulas`:
 
 ```
 MinAdgang = LookUp(ProjektAdgange, Projekt = varValgtProjekt && Bruger = BrugerNu);
-KanRedigere = ErAdmin || (!IsBlank(MinAdgang) && MinAdgang.Adgangsniveau = 'Adgangsniveau (ProjektAdgange)'.Redaktør);
+KanRedigere = ErAdmin || (!IsBlank(MinAdgang) && MinAdgang.Adgangsniveau = 'Adgangsniveau'.Redaktør);
 ```
 
 Sæt `DisplayMode: If(KanRedigere, DisplayMode.Edit, DisplayMode.View)` på:

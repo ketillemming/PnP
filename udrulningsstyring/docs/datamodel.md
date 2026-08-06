@@ -47,6 +47,12 @@ Dataverse for Teams-tabeller. Det er grundlaget for både
   De auto-tildelte tal tælder op i indtastningsrækkefølgen, og for
   `Aktivitet.Fase` er det dem, der giver den korrekte ADKAR-sortering
   (A-D-K-A-R) i UI'et.
+- **Alle choices er globale ("synkroniserede"), ikke tabel-lokale.** De
+  oprettes som genbrugelige valg på miljøniveau, så en valgliste kan rettes
+  ét sted. Det har betydning for Power Fx-syntaksen: et globalt valg
+  refereres som `'Rolletype'.Admin`, hvor et lokalt ville hedde
+  `'Rolle (Brugere)'.Admin`. Formlerne i `build-guide.md` bruger den globale
+  form. Navnene på de globale valg står i hver tabel nedenfor.
 
 ## Tabeller
 
@@ -59,9 +65,9 @@ til visning og opslag. Én række pr. person, der skal bruge appen.
 | (primærnøgle, auto) | Bruger | Unikt tekst-id | Auto-genereret GUID |
 | `{prefix}_navn` | Navn | Tekst (enkelt linje), påkrævet | |
 | `{prefix}_email` | Email | Tekst (enkelt linje), påkrævet | Skal matche brugerens login-mail i Teams/Entra ID — brug `User().Email` i Power Fx til opslag |
-| `{prefix}_rolle` | Rolle | Choice, påkrævet | Se `Rolle`-choice nedenfor |
+| `{prefix}_rolle` | Rolle | Choice, påkrævet | Globalt valg `Rolletype`, se nedenfor |
 
-**Choice: Rolle**
+**Globalt valg: `Rolletype`** (bruges af `Bruger.Rolle`)
 | Værdi | Label |
 |---|---|
 | 1 | Admin |
@@ -93,9 +99,9 @@ Dataverses indbyggede post-deling — se begrundelse i `README.md`.
 | (primærnøgle, auto) | ProjektAdgang | Unikt tekst-id | |
 | `{prefix}_projekt` | Projekt | Lookup → Projekt, påkrævet | |
 | `{prefix}_bruger` | Bruger | Lookup → Bruger, påkrævet | |
-| `{prefix}_adgangsniveau` | Adgangsniveau | Choice, påkrævet | Se `Adgangsniveau`-choice nedenfor |
+| `{prefix}_adgangsniveau` | Adgangsniveau | Choice, påkrævet | Globalt valg `Adgangsniveau`, se nedenfor |
 
-**Choice: Adgangsniveau**
+**Globalt valg: `Adgangsniveau`** (bruges af `ProjektAdgang.Adgangsniveau`)
 | Værdi | Label |
 |---|---|
 | 1 | Redaktør |
@@ -136,8 +142,9 @@ projektoversigten eller åbne det direkte.
 (Oprettelses-/ændringstidspunkt dækkes af systemkolonnerne `Oprettet den` og
 `Ændret den`.)
 
-**Choice: Fase (ADKAR)** — værdierne er talsat 1-5, så de altid kan sorteres
-korrekt i ADKAR-rækkefølge uanset hvordan de er tastet ind i Studio.
+**Globalt valg: `ADKARfase`** (bruges af `Aktivitet.Fase`) — indtast de fem
+faser i præcis denne rækkefølge, så de auto-tildelte værdier stiger i
+ADKAR-rækkefølge og kan sorteres korrekt i UI'et.
 | Værdi | Label | Bogstav på skinnen |
 |---|---|---|
 | 1 | Bevidsthed (Awareness) | A |
@@ -146,7 +153,7 @@ korrekt i ADKAR-rækkefølge uanset hvordan de er tastet ind i Studio.
 | 4 | Evne (Ability) | A |
 | 5 | Fastholdelse (Reinforcement) | R |
 
-**Choice: Type**
+**Globalt valg: `Aktivitetstype`** (bruges af `Aktivitet.Type`)
 | Værdi | Label | Svarer til |
 |---|---|---|
 | 1 | Kommunikation | generel kommunikation |
@@ -154,7 +161,7 @@ korrekt i ADKAR-rækkefølge uanset hvordan de er tastet ind i Studio.
 | 3 | Træning | træning i afdeling |
 | 4 | Opfølgning | followup |
 
-**Choice: Status**
+**Globalt valg: `Aktivitetsstatus`** (bruges af `Aktivitet.Status`)
 | Værdi | Label |
 |---|---|
 | 1 | Ikke startet |

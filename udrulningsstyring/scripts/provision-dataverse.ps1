@@ -11,6 +11,18 @@
     tabeller/kolonner: det springer over alt, der allerede findes, så det er
     trygt at køre igen efter en fejl midtvejs.
 
+.NOTES
+    STATUS: Tabellerne oprettes i praksis manuelt i Power Apps Studio, ikke
+    med dette script. Scriptet er bevaret som en præcis, læsbar beskrivelse
+    af strukturen — og som udgangspunkt, hvis skemaet senere skal genskabes
+    i et andet miljø.
+
+    Kendt afvigelse: scriptet opretter choice-kolonner som TABEL-LOKALE
+    (IsGlobal = $false), mens den manuelt byggede løsning bruger GLOBALE
+    ("synkroniserede") valg — se docs/datamodel.md. Skal scriptet bruges
+    til at genskabe skemaet 1:1, skal valgene først oprettes globalt via
+    GlobalOptionSetDefinitions og derefter refereres fra kolonnerne.
+
 .PREREQUISITES
     - PowerShell 7+
     - Az.Accounts-modulet: Install-Module Az.Accounts -Scope CurrentUser
