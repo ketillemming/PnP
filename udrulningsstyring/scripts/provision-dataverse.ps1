@@ -373,7 +373,7 @@ New-ChoiceColumn -EntitySchemaName (P 'Aktivitet') -SchemaName (P 'fase') -Displ
 New-ChoiceColumn -EntitySchemaName (P 'Aktivitet') -SchemaName (P 'type') -DisplayName 'Type' `
     -Options @{ 1 = 'Kommunikation'; 2 = 'Fælles igangsætning'; 3 = 'Træning'; 4 = 'Opfølgning' }
 New-ChoiceColumn -EntitySchemaName (P 'Aktivitet') -SchemaName (P 'status') -DisplayName 'Status' `
-    -Options @{ 1 = 'Ikke startet'; 2 = 'Planlagt'; 3 = 'Gennemført'; 4 = 'Udskudt' }
+    -Options @{ 1 = 'Ikke startet'; 2 = 'Planlagt'; 3 = 'Igangværende'; 4 = 'Gennemført'; 5 = 'Udskudt' }
 New-TextColumn -EntitySchemaName (P 'Aktivitet') -SchemaName (P 'beskrivelse') -DisplayName 'Beskrivelse' -MaxLength 2000 -Required $true -MultiLine
 New-TextColumn -EntitySchemaName (P 'Aktivitet') -SchemaName (P 'ansvarligfritekst') -DisplayName 'Ansvarlig (fritekst)' -MaxLength 200
 New-DateColumn -EntitySchemaName (P 'Aktivitet') -SchemaName (P 'planlagtdato') -DisplayName 'Planlagt dato'

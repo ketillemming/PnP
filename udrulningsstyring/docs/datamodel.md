@@ -169,8 +169,13 @@ ADKAR-rækkefølge og kan sorteres korrekt i UI'et.
 |---|---|
 | 1 | Ikke startet |
 | 2 | Planlagt |
-| 3 | Gennemført |
-| 4 | Udskudt |
+| 3 | Igangværende |
+| 4 | Gennemført |
+| 5 | Udskudt |
+
+`Igangværende` dækker det, der er sat i gang, men ikke afsluttet. Kun
+`Gennemført` tæller med i ADKAR-skinnens udfyldning — en igangværende
+aktivitet tæller altså som ikke-færdig.
 
 ---
 
@@ -193,6 +198,8 @@ Bruger ─┬─< ProjektAdgang >─┬─ Projekt ─┬─< Afdeling
 
 | Status | Farve | Kilde |
 |---|---|---|
+| Igangværende | Fuld blå `#00668C` med hvid tekst | Designguide |
 | Gennemført | Grøn accent `#C8D400` (mørkere nuance for tekst/kontrast) | Designguide |
 | Udskudt | Rav/orange (midlertidig, se `design-reference.md`) | Prototype-arv |
-| Planlagt / Ikke startet | Neutrale gråtoner | Design-reference |
+| Planlagt | Blå, svag opacity | Design-reference |
+| Ikke startet | Neutrale gråtoner | Design-reference |

@@ -43,8 +43,15 @@ den kølige blå:
 |---|---|---|
 | Ikke startet | Neutral kant `#D8DBDE` | Tekst sekundær `#5C6570` |
 | Planlagt | Blå, 10 % opacity (`#00668C1A`) | Blå `#00668C` |
+| Igangværende | Blå, fuld `#00668C` | Hvid |
 | Gennemført | Grøn `#C8D400` | Grøn — mørk `#5A5F00` (eller sort) |
 | Udskudt | Rav (midlertidig) `#B9822F`, 15 % opacity | Rav `#B9822F` |
+
+Statusfarverne danner bevidst en trappe fra neutral til grøn: grå (ikke
+begyndt) → lys blå (planlagt) → **fuld blå (i gang)** → grøn (færdig), med
+rav som sidespor for det udskudte. `Igangværende` er den eneste med fuld
+farvemætning, så øjet falder på det, der faktisk kører lige nu. Hvid tekst
+på `#00668C` har et kontrastforhold på ca. 6,4:1 og består WCAG AA.
 
 ## Typografi
 
