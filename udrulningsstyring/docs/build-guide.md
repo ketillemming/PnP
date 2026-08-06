@@ -49,7 +49,7 @@ valideres. Adgangsstyringen lægges oven på i milepæl 3 (nedenfor).
     ADKAR-statuslys (se boks nedenfor).
   - `OnSelect` på skabelonen: `Set(varValgtProjekt, ThisItem); Navigate(scrProjekt)`
 - **Knap "+ Nyt projekt"**: kun for admin (adgang lægges til i milepæl 3) —
-  `OnSelect`: `Patch(Projekter, Defaults(Projekter), {Navn: "Nyt projekt", 'Oprettet af': BrugerNu})`
+  `OnSelect`: `Patch(Projekter, Defaults(Projekter), {Navn: "Nyt projekt", Projektejer: BrugerNu})`
 
 **ADKAR-statuslys (mini)** — genbrug som Power Apps **Komponent**
 (`cmpAdkarSkinne`), så den samme logik bruges både her (lille) og på

@@ -13,9 +13,12 @@ Dataverse for Teams-tabeller. Det er grundlaget for både
   virksomhedens tenant") — der er ikke behov for ekstra kode til det.
 - **Tabel-præfiks.** Når I opretter tabeller i Power Apps Studio (eller kører
   provisioneringsscriptet), får de et automatisk løsnings-præfiks fra jeres
-  miljøs standardudgiver, fx `cra1b_`. I denne doks eksempler bruges
-  `{prefix}_` som pladsholder — I finder jeres faktiske præfiks under
-  **Løsninger → Standardløsning → Udgiver** i Power Apps Studio.
+  miljøs standardudgiver. **I dette miljø er præfikset `cr18b_`** (aflæst på
+  den oprettede `cr18b_bruger`-tabel). I dokumentets eksempler bruges
+  `{prefix}_` som pladsholder for det.
+  Praktisk konsekvens: flere steder i Studio optræder to tabeller med samme
+  viste navn — fx `Bruger` (Dataverses indbyggede `systemuser`) og `Bruger`
+  (vores `cr18b_bruger`). **Vælg altid den med `cr18b_`.**
 - **Systemkolonner genbruges.** Hver Dataverse-tabel har automatisk
   `Oprettet den` (createdon), `Ændret den` (modifiedon), `Oprettet af` og
   `Ejer`. Brief'ens `createdAt`/`updatedAt`-felter er derfor ikke lavet som
@@ -84,7 +87,7 @@ brief'ens `member`.
 | (primærnøgle, auto) | Projekt | Unikt tekst-id | |
 | `{prefix}_navn` | Navn | Tekst (enkelt linje), påkrævet | |
 | `{prefix}_golivedato` | Go-live dato | Kun dato, valgfri | |
-| `{prefix}_oprettetaf` | Oprettet af | Lookup → Bruger, påkrævet | |
+| `{prefix}_projektejer` | Projektejer | Lookup → Bruger, påkrævet | Peger på den custom `Bruger`-tabel (`{prefix}_bruger`), ikke Dataverses indbyggede `systemuser`. Navnet er bevidst ikke "Oprettet af", da Dataverse selv har en systemkolonne med det navn |
 
 (Oprettelsestidspunkt dækkes af systemkolonnen `Oprettet den`.)
 

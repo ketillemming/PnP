@@ -334,8 +334,8 @@ New-Table -SchemaName (P 'Projekt') -DisplayName 'Projekt' -DisplayCollectionNam
     -PrimaryColumnSchemaName (P 'navn') -PrimaryColumnDisplayName 'Navn'
 New-DateColumn -EntitySchemaName (P 'Projekt') -SchemaName (P 'golivedato') -DisplayName 'Go-live dato'
 New-LookupColumn -FromEntitySchemaName (P 'Projekt') -ToEntitySchemaName (P 'Bruger') `
-    -LookupSchemaName (P 'oprettetaf') -LookupDisplayName 'Oprettet af' `
-    -RelationshipSchemaName (P 'projekt_oprettetaf_bruger') -Required $true
+    -LookupSchemaName (P 'projektejer') -LookupDisplayName 'Projektejer' `
+    -RelationshipSchemaName (P 'projekt_projektejer_bruger') -Required $true
 
 # --- Afdeling ---
 New-Table -SchemaName (P 'Afdeling') -DisplayName 'Afdeling' -DisplayCollectionName 'Afdelinger' `
