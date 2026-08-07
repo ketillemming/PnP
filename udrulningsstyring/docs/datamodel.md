@@ -23,6 +23,16 @@ Dataverse for Teams-tabeller. Det er grundlaget for både
   `Oprettet den` (createdon), `Ændret den` (modifiedon), `Oprettet af` og
   `Ejer`. Brief'ens `createdAt`/`updatedAt`-felter er derfor ikke lavet som
   separate, custom kolonner nedenfor — de findes allerede.
+- **Primærkolonnen hedder "Name" som standard og skal omdøbes.** Når en
+  tabel oprettes i Studio, laver Dataverse automatisk primærkolonnen med
+  det viste navn `Name`. Den er omdøbt til `Navn` i alle fem tabeller, så
+  app'ens felt-etiketter bliver danske. Kun det viste navn ændres — det
+  logiske navn forbliver `{prefix}_name`, og data røres ikke.
+- **Viste navne med bindestreg, mellemrum eller parentes kræver
+  enkeltanførselstegn i Power Fx:** `'E-mail'`, `'Go-live dato'`,
+  `'Planlagt dato'`, `'Ansvarlig (bruger)'`. Uden dem opfatter Power Fx
+  navnet som ukendt, og hele formlen bliver til en fejlværdi — som så
+  forplanter sig til alt, der bruger den.
 - **Primær navnekolonne på tabeller uden naturligt navn.** Dataverse kræver,
   at hver tabel har én "primær navnekolonne" (kort enkeltlinje-tekst), som
   bruges til at identificere rækken i lister, søgning og lookup-felter. For
@@ -67,7 +77,7 @@ til visning og opslag. Én række pr. person, der skal bruge appen.
 |---|---|---|---|
 | (primærnøgle, auto) | Bruger | Unikt tekst-id | Auto-genereret GUID |
 | `{prefix}_navn` | Navn | Tekst (enkelt linje), påkrævet | |
-| `{prefix}_email` | Email | Tekst (enkelt linje), påkrævet | Skal matche brugerens login-mail i Teams/Entra ID — brug `User().Email` i Power Fx til opslag |
+| `{prefix}_email` | E-mail | Tekst (enkelt linje), påkrævet | Skal matche brugerens login-mail i Teams/Entra ID. Bemærk bindestregen i det viste navn: i Power Fx skal kolonnen skrives `'E-mail'` med enkeltanførselstegn — `LookUp(Brugere; 'E-mail' = User().Email)` |
 | `{prefix}_rolle` | Rolle | Choice, påkrævet | Globalt valg `Rolletype`, se nedenfor |
 
 **Globalt valg: `Rolletype`** (bruges af `Bruger.Rolle`)

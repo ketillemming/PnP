@@ -39,8 +39,8 @@ decimaltegn. Derfor gælder:
 Eksempel — samme formel i de to sprog:
 
 ```
-LookUp(Brugere; Email = User().Email)      // dansk (brug denne)
-LookUp(Brugere, Email = User().Email)      // international
+LookUp(Brugere; 'E-mail' = User().Email)      // dansk (brug denne)
+LookUp(Brugere, 'E-mail' = User().Email)      // international
 ```
 
 Det er ikke en indstilling, man vælger pr. app — den følger brugerens
@@ -75,7 +75,7 @@ forventet"* eller *"Navnet er ikke gyldigt"* — og fordi en enkelt fejl i
    clrTekstPrimaer = ColorValue("#1A1A1A");;
    clrTekstSekundaer = ColorValue("#5C6570");;
    fontBrand = Font.Arial;;
-   BrugerNu = LookUp(Brugere; Email = User().Email);;
+   BrugerNu = LookUp(Brugere; 'E-mail' = User().Email);;
    ErAdmin = !IsBlank(BrugerNu) && BrugerNu.Rolle = 'Rolletype'.Admin;;
    ```
 
