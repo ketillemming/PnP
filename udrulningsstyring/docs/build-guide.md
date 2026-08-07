@@ -23,6 +23,33 @@ ingen se noget i app'en (se "Adgangsstyring" nedenfor).
 > Code App, som det oprindelige brief lagde op til), kræver det en opgradering
 > fra Teams-miljøet til fuld Dataverse — og dermed Power Apps Premium-licenser.
 
+## Formelsprog: semikolon, ikke komma
+
+**Alle formler i denne guide er skrevet i dansk formelsprog.** Power Fx
+skifter skilletegn efter forfatterens sprogindstilling, og i dansk
+opsætning — som er den, dette projekt bygges i — bruges komma som
+decimaltegn. Derfor gælder:
+
+| Rolle | Dansk opsætning | International opsætning |
+|---|---|---|
+| Mellem argumenter | `;` | `,` |
+| Mellem hele sætninger | `;;` | `;` |
+| Felter i en post | `{a: 1; b: 2}` | `{a: 1, b: 2}` |
+
+Eksempel — samme formel i de to sprog:
+
+```
+LookUp(Brugere; Email = User().Email)      // dansk (brug denne)
+LookUp(Brugere, Email = User().Email)      // international
+```
+
+Det er ikke en indstilling, man vælger pr. app — den følger brugerens
+sprog i Microsoft 365. Kopierer I formler fra Microsofts dokumentation
+eller fra internettet, står de næsten altid i den internationale form og
+skal oversættes. Symptomet, når man glemmer det, er fejlen *"Operator
+forventet"* eller *"Navnet er ikke gyldigt"* — og fordi en enkelt fejl i
+`App.Formulas` slår **hele** blokken ud, ser det ud som om intet virker.
+
 ## 0. Opsætning
 
 1. I jeres Team i Microsoft Teams → **Power Apps**-appen → **+ Ny app** →
@@ -30,18 +57,38 @@ ingen se noget i app'en (se "Adgangsstyring" nedenfor).
    Dataverse for Teams-miljø.
 2. **Tilføj data** (højre panel) → tilføj alle fem tabeller: `Brugere`,
    `Projekter`, `Afdelinger`, `ProjektAdgange`, `Aktiviteter`.
-3. **App → Formler** (venstre panel, forstørrelsesglas-ikonet → Formler,
-   eller `App`-objektet i træet) → indsæt farve-/font-konstanterne fra
-   `design-reference.md`, og tilføj denne named formula til at slå den
-   aktuelle bruger op ét sted:
+   Globale valglister (`Rolletype`, `Adgangsniveau`, `ADKARfase`,
+   `Aktivitetstype`, `Aktivitetsstatus`) skal **ikke** tilføjes separat —
+   de følger automatisk med de tabeller, der bruger dem.
+3. Vælg **App** i trævisningen, og vælg egenskaben **Formulas** i
+   rullelisten øverst til venstre (den viser `StartScreen`, når App er
+   markeret). Indsæt hele temaet og brugeropslaget her:
 
    ```
-   BrugerNu = LookUp(Brugere, Email = User().Email);
-   ErAdmin = !IsBlank(BrugerNu) && BrugerNu.Rolle = 'Rolletype'.Admin;
+   clrBrandBlaa = ColorValue("#00668C");;
+   clrBrandBlaaMoerk = ColorValue("#004D69");;
+   clrBrandGroen = ColorValue("#C8D400");;
+   clrBrandGroenMoerk = ColorValue("#5A5F00");;
+   clrStatusUdskudt = ColorValue("#B9822F");;
+   clrNeutralBaggrund = ColorValue("#F5F6F7");;
+   clrNeutralKant = ColorValue("#D8DBDE");;
+   clrTekstPrimaer = ColorValue("#1A1A1A");;
+   clrTekstSekundaer = ColorValue("#5C6570");;
+   fontBrand = Font.Arial;;
+   BrugerNu = LookUp(Brugere; Email = User().Email);;
+   ErAdmin = !IsBlank(BrugerNu) && BrugerNu.Rolle = 'Rolletype'.Admin;;
    ```
 
    `BrugerNu` og `ErAdmin` genberegnes automatisk og kan bruges på alle
-   skærme uden `OnStart` eller globale variabler.
+   skærme uden `OnStart` eller globale variabler. Brug `Formulas` — ikke
+   `OnStart` — og bland ikke de to: `Formulas` bruger `navn = værdi`,
+   mens `OnStart` bruger `Set(navn; værdi)`. De to skrivemåder kan ikke
+   byttes rundt.
+
+   Driller `'Rolletype'.Admin`, kan sidste linje skrives som
+   `ErAdmin = !IsBlank(BrugerNu) && Text(BrugerNu.Rolle) = "Admin";;`.
+   Den er lidt mere skrøbelig (afhænger af, at etiketten hedder præcis
+   "Admin"), men undgår at referere valglisten ved navn.
 
 4. Opret fire skærme: `scrProjektoversigt`, `scrProjekt`, `scrAdmin`, og en
    overlay-container til "Del projekt"-panelet (beskrevet under skærm 2).
@@ -55,14 +102,36 @@ valideres. Adgangsstyringen lægges oven på i milepæl 3 (nedenfor).
 
 ### Skærm: scrProjektoversigt
 
-- **Galleri `galProjekter`** (lodret, tom skabelon):
-  - `Items`: `SortByColumns(Projekter, "Navn", SortOrder.Ascending)`
-  - I skabelonen: projektnavn (`ThisItem.Navn`, `fontBrand`, 18px, Bold),
-    go-live dato (`Text(ThisItem.'Go-live dato', "dd-mm-åååå")`), og et lille
-    ADKAR-statuslys (se boks nedenfor).
-  - `OnSelect` på skabelonen: `Set(varValgtProjekt, ThisItem); Navigate(scrProjekt)`
-- **Knap "+ Nyt projekt"**: kun for admin (adgang lægges til i milepæl 3) —
-  `OnSelect`: `Patch(Projekter, Defaults(Projekter), {Navn: "Nyt projekt", Projektejer: BrugerNu})`
+Skærmens `Fill`: `clrNeutralBaggrund`
+
+- **Overskrift** (tekstetiket): `Text` = `"Udrulning & planlægning"`,
+  `Font` = `fontBrand`, `Size` = `28`, `FontWeight` = `FontWeight.Bold`,
+  `Color` = `clrBrandBlaa`.
+- **Knap "+ Nyt projekt"** (`Fill` = `clrBrandBlaa`, `Color` = `White`):
+
+  ```
+  OnSelect:
+  Patch(Projekter; Defaults(Projekter); {Navn: "Nyt projekt"; Projektejer: BrugerNu})
+  ```
+
+  Adgangsbegrænsning lægges på i milepæl 3.
+- **Galleri `galProjekter`** (lodret, layout "Titel og undertekst"):
+  - `Items`: `Sort(Projekter; Navn)`
+  - `TemplateSize`: `88`
+  - `Title1.Text`: `ThisItem.Navn` (`fontBrand`, `clrTekstPrimaer`)
+  - `Subtitle1.Text` (`fontBrand`, `clrTekstSekundaer`):
+
+    ```
+    If(
+      IsBlank(ThisItem.'Go-live dato');
+      "Ingen go-live dato";
+      "Go-live: " & Text(ThisItem.'Go-live dato'; DateTimeFormat.ShortDate)
+    )
+    ```
+
+  - Plus et lille ADKAR-statuslys pr. række (se boks nedenfor)
+  - `OnSelect` på skabelonen:
+    `Set(varValgtProjekt; ThisItem);; Navigate(scrProjekt)`
 
 **ADKAR-statuslys (mini)** — genbrug som Power Apps **Komponent**
 (`cmpAdkarSkinne`), så den samme logik bruges både her (lille) og på
@@ -71,9 +140,9 @@ For hver af de 5 faser beregnes andel gennemført:
 
 ```
 With(
-  {AktiviteterIFase: Filter(Aktiviteter, Projekt = ProjektRecord && Fase = <fase-værdi>)},
-  CountRows(Filter(AktiviteterIFase, Status = 'Aktivitetsstatus'.Gennemført))
-    / Max(1, CountRows(AktiviteterIFase))
+  {AktiviteterIFase: Filter(Aktiviteter; Projekt = ProjektRecord && Fase = <fase-værdi>)};
+  CountRows(Filter(AktiviteterIFase; Status = 'Aktivitetsstatus'.Gennemført))
+    / Max(1; CountRows(AktiviteterIFase))
 )
 ```
 
@@ -82,17 +151,20 @@ Brug resultatet (0-1) til at style hver af de 5 cirkler efter reglerne i
 5 små prikker uden bogstaver. I fuld visning (projektsiden): 5 cirkler med
 A-D-K-A-R og klik-til-filter (se nedenfor).
 
+Bemærk: kun `Gennemført` tæller med. `Igangværende` tæller som ikke-færdig.
+
 ### Skærm: scrProjekt
 
 - **Header**: `varValgtProjekt.Navn` (24px, Bold, `fontBrand`).
 - **`cmpAdkarSkinne`** i fuld størrelse, med output-property `ValgtFase`,
-  sat via `OnSelect` på hver cirkel: `Set(varFaseFilter, <fase-værdi>)`
+  sat via `OnSelect` på hver cirkel: `Set(varFaseFilter; <fase-værdi>)`
   (eller `Blank()` hvis der klikkes på en allerede valgt fase, så filteret
   ryddes).
 - **Afdelingsliste** (galleri `galAfdelinger`):
-  - `Items`: `Filter(Afdelinger, Projekt = varValgtProjekt)`
-  - "+ Tilføj afdeling"-knap → tekstinput + `Patch(Afdelinger, Defaults(Afdelinger), {Navn: txtNyAfdeling.Text, Projekt: varValgtProjekt})`
-  - Fjern-ikon pr. række → `Remove(Afdelinger, ThisItem)` (med en bekræft-dialog, se Polering)
+  - `Items`: `Filter(Afdelinger; Projekt = varValgtProjekt)`
+  - "+ Tilføj afdeling"-knap → tekstinput +
+    `Patch(Afdelinger; Defaults(Afdelinger); {Navn: txtNyAfdeling.Text; Projekt: varValgtProjekt})`
+  - Fjern-ikon pr. række → `Remove(Afdelinger; ThisItem)` (med en bekræft-dialog, se Polering)
 - **Filtre** (tre dropdowns/comboboxes over aktivitetstabellen): Fase,
   Afdeling, Status. Gem valg i `varFaseFilter` (deles med ADKAR-skinnen),
   `varAfdelingFilter`, `varStatusFilter`.
@@ -103,25 +175,27 @@ A-D-K-A-R og klik-til-filter (se nedenfor).
   Items:
   Sort(
     Filter(
-      Aktiviteter,
-      Projekt = varValgtProjekt,
-      IsBlank(varFaseFilter) || Fase = varFaseFilter,
-      IsBlank(varAfdelingFilter) || Afdeling = varAfdelingFilter,
+      Aktiviteter;
+      Projekt = varValgtProjekt;
+      IsBlank(varFaseFilter) || Fase = varFaseFilter;
+      IsBlank(varAfdelingFilter) || Afdeling = varAfdelingFilter;
       IsBlank(varStatusFilter) || Status = varStatusFilter
-    ),
-    'Planlagt dato', SortOrder.Ascending
+    );
+    'Planlagt dato';
+    SortOrder.Ascending
   )
   ```
 
   - Kolonner: Fase (bogstav-badge), Type, Beskrivelse (afkortet), Afdeling
-    (eller "Alle afdelinger" hvis tom), Ansvarlig (`Coalesce(ThisItem.'Ansvarlig (bruger)'.Navn, ThisItem.'Ansvarlig (fritekst)', "-")`),
+    (eller "Alle afdelinger" hvis tom), Ansvarlig
+    (`Coalesce(ThisItem.'Ansvarlig (bruger)'.Navn; ThisItem.'Ansvarlig (fritekst)'; "-")`),
     Planlagt dato, **Status som dropdown direkte i tabellen**:
 
     ```
     // Dropdown 'ddStatus' i galleri-skabelonen
     Items: Choices(Aktiviteter.Status)
     Default: ThisItem.Status
-    OnChange: Patch(Aktiviteter, ThisItem, {Status: ddStatus.Selected})
+    OnChange: Patch(Aktiviteter; ThisItem; {Status: ddStatus.Selected})
     ```
 
     Farvelæg badgen efter tabellen i `design-reference.md` (Statusfarver).
@@ -133,7 +207,13 @@ A-D-K-A-R og klik-til-filter (se nedenfor).
   - `DataCard` for "Ansvarlig": to felter side om side — combobox mod
     `Brugere` (sætter `Ansvarlig (bruger)`) OG et tekstfelt (sætter
     `Ansvarlig (fritekst)`) — udfyld kun ét, jf. `datamodel.md`.
-  - `OnSuccess`: `Set(varNavn, Left(dcBeskrivelse.Update, 80)); Patch(Aktiviteter, LastSubmit(frmNyAktivitet), {Navn: varNavn})`
+  - `OnSuccess`:
+
+    ```
+    Set(varNavn; Left(dcBeskrivelse.Update; 80));;
+    Patch(Aktiviteter; LastSubmit(frmNyAktivitet); {Navn: varNavn})
+    ```
+
     (sætter den primære navnekolonne, jf. noten i `datamodel.md`).
 
 ---
@@ -146,8 +226,8 @@ Erstat `Items` på `galProjekter` med:
 
 ```
 Filter(
-  Projekter,
-  Projekt in Filter(ProjektAdgange, Bruger = BrugerNu).Projekt
+  Projekter;
+  Projekt in Filter(ProjektAdgange; Bruger = BrugerNu).Projekt
 )
 ```
 
@@ -159,11 +239,11 @@ det trygt at ignorere en eventuel "ikke-delegerbar formel"-advarsel her.)*
 Named formula i `App.Formulas`:
 
 ```
-MinAdgang = LookUp(ProjektAdgange, Projekt = varValgtProjekt && Bruger = BrugerNu);
-KanRedigere = ErAdmin || (!IsBlank(MinAdgang) && MinAdgang.Adgangsniveau = 'Adgangsniveau'.Redaktør);
+MinAdgang = LookUp(ProjektAdgange; Projekt = varValgtProjekt && Bruger = BrugerNu);;
+KanRedigere = ErAdmin || (!IsBlank(MinAdgang) && MinAdgang.Adgangsniveau = 'Adgangsniveau'.Redaktør);;
 ```
 
-Sæt `DisplayMode: If(KanRedigere, DisplayMode.Edit, DisplayMode.View)` på:
+Sæt `DisplayMode: If(KanRedigere; DisplayMode.Edit; DisplayMode.View)` på:
 - "+ Tilføj afdeling" / fjern-afdeling-knapper
 - "+ Tilføj aktivitet"-knap
 - Status-dropdownen i aktivitetstabellen (læsere ser status som tekst, ikke som redigerbar dropdown)
@@ -173,18 +253,21 @@ Sæt `DisplayMode: If(KanRedigere, DisplayMode.Edit, DisplayMode.View)` på:
 Et overlay-panel (`pnlDelProjekt`), synligt når `varVisDelProjekt = true`,
 kun tilgængeligt for admin (`ErAdmin`) eller projektets ejer:
 
-- **Galleri** over eksisterende adgange: `Items: Filter(ProjektAdgange, Projekt = varValgtProjekt)`, med bruger-navn, adgangsniveau-dropdown (samme `OnChange: Patch`-mønster som statusdropdownen), og en fjern-knap (`Remove(ProjektAdgange, ThisItem)`).
+- **Galleri** over eksisterende adgange:
+  `Items: Filter(ProjektAdgange; Projekt = varValgtProjekt)`, med
+  bruger-navn, adgangsniveau-dropdown (samme `OnChange: Patch`-mønster som
+  statusdropdownen), og en fjern-knap (`Remove(ProjektAdgange; ThisItem)`).
 - **Tilføj adgang**: combobox mod `Brugere` (`cbNyBruger`) + choice-vælger
   for niveau (`cbNyNiveau`) + knap:
 
   ```
   Patch(
-    ProjektAdgange,
-    Defaults(ProjektAdgange),
+    ProjektAdgange;
+    Defaults(ProjektAdgange);
     {
-      Navn: cbNyBruger.Selected.Navn & " – " & varValgtProjekt.Navn,
-      Projekt: varValgtProjekt,
-      Bruger: cbNyBruger.Selected,
+      Navn: cbNyBruger.Selected.Navn & " – " & varValgtProjekt.Navn;
+      Projekt: varValgtProjekt;
+      Bruger: cbNyBruger.Selected;
       Adgangsniveau: cbNyNiveau.Selected
     }
   )
@@ -209,13 +292,12 @@ Kun tilgængelig i navigationen når `ErAdmin = true`. Indeholder:
 - **ADKAR-skinnens klik-til-filter**: sørg for at klik på en allerede-valgt
   fase-cirkel rydder filteret igen (toggle), jf. beskrivelsen i
   `design-reference.md`.
-- **Responsivt layout**: sæt skærmenes `LoadingSpinnerColor`/container-bredder
-  til `%`/`Parent.Width` frem for faste pixelværdier, og test på både
-  tablet- og telefonstørrelse i Studios forhåndsvisning (`Fil → Indstillinger
-  → Skærmstørrelse`).
+- **Responsivt layout**: sæt container-bredder til `%`/`Parent.Width` frem
+  for faste pixelværdier, og test på både tablet- og telefonstørrelse i
+  Studios forhåndsvisning (`Indstillinger → Skærmstørrelse`).
 - **Tomme tilstande**: vis en venlig besked ("Ingen projekter endnu" /
   "Ingen aktiviteter matcher filtret") når et galleri har 0 rækker
-  (`If(CountRows(galX.AllItems) = 0, ...)`), i stedet for et tomt hvidt felt.
+  (`If(CountRows(galX.AllItems) = 0; ...)`), i stedet for et tomt hvidt felt.
 
 ---
 
@@ -224,7 +306,7 @@ Kun tilgængelig i navigationen når `ErAdmin = true`. Indeholder:
 1. **Publicér løsningen**: Løsninger → Standardløsning → **Publicér alle
    tilpasninger** (nødvendigt efter enhver ny tabel/kolonne, inkl. dem fra
    provisioneringsscriptet).
-2. **Gem og publicér app'en**: Fil → Gem → Publicér.
+2. **Gem og publicér app'en**: Gem → Publicér.
 3. **Del app'en** med de rette medarbejdere: da app'en ligger i et Team,
    sker den grundlæggende adgang via Teamets medlemskab. Del desuden selve
    app'en fra Power Apps-fanen i Teamet, så den vises i deres app-liste.
