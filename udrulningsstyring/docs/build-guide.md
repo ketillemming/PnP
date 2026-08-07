@@ -10,6 +10,19 @@ tabellerne manuelt via Studio → Tabeller), og opret mindst én `Bruger`-række
 med jeres egen e-mail og `Rolle = Admin`, før I går videre — ellers kan
 ingen se noget i app'en (se "Adgangsstyring" nedenfor).
 
+> **Appen åbnes altid gennem Microsoft Teams — ikke via make.powerapps.com.**
+> Dataverse for Teams-miljøer er adskilt fra det almindelige maker-portal i
+> browseren. App og tabeller findes derfor ikke i make.powerapps.com, selvom
+> alt er intakt. Det ligner datatab, men er det ikke.
+>
+> Vej ind: Teams → venstre kant → **"…" (Få vist flere apps)** → **Power
+> Apps** → fanen **Build** → vælg Teamet. Højreklik på Power Apps-ikonet og
+> vælg **Fastgør** for at få det permanent i venstremenuen.
+>
+> Vil I på et tidspunkt kunne redigere i browseren (eller bygge en Power Apps
+> Code App, som det oprindelige brief lagde op til), kræver det en opgradering
+> fra Teams-miljøet til fuld Dataverse — og dermed Power Apps Premium-licenser.
+
 ## 0. Opsætning
 
 1. I jeres Team i Microsoft Teams → **Power Apps**-appen → **+ Ny app** →
