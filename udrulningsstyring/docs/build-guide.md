@@ -73,6 +73,22 @@ Praktisk tip: skriv kontrollens navn efterfulgt af et punktum i
 formellinjen (`txtProjektNavn.`) — så viser Power Apps alle egenskaber,
 kontrollen faktisk har.
 
+## Sammenligning af rækker: brug id, ikke hele rækken
+
+Power Fx kan ikke sammenligne to hele rækker med `=` — det giver fejlen
+*"Inkompatible typer til sammenligning: record, record"*. Sammenlign i
+stedet rækkernes id-kolonne (GUID'en), som har samme navn som tabellen:
+
+```
+Filter(Afdelinger; Projekt.Projekt = varValgtProjekt.Projekt)     // virker
+Filter(Afdelinger; Projekt = varValgtProjekt)                     // fejler
+```
+
+Læses som: "afdelingens projekt-opslag, dets id" = "det valgte projekts id".
+
+Det gælder **kun ved sammenligning**. Når en værdi *tildeles* i `Patch`,
+skal hele rækken bruges — `{Projekt: varValgtProjekt}`, ikke id'et.
+
 ## 0. Opsætning
 
 1. I jeres Team i Microsoft Teams → **Power Apps**-appen → **+ Ny app** →
@@ -164,7 +180,7 @@ For hver af de 5 faser beregnes andel gennemført:
 
 ```
 With(
-  {AktiviteterIFase: Filter(Aktiviteter; Projekt = ProjektRecord && Fase = <fase-værdi>)};
+  {AktiviteterIFase: Filter(Aktiviteter; Projekt.Projekt = ProjektRecord.Projekt && Fase = <fase-værdi>)};
   CountRows(Filter(AktiviteterIFase; Status = 'Aktivitetsstatus'.Gennemført))
     / Max(1; CountRows(AktiviteterIFase))
 )
@@ -188,9 +204,11 @@ Skærmens `Fill`: `clrNeutralBaggrund`
 |---|---|---|
 | Knap "← Tilbage" | `OnSelect` | `Navigate(scrProjektoversigt)` |
 | Tekstinput `txtProjektNavn` | `Value` | `varValgtProjekt.Navn` |
-| | `OnChange` | `Set(varValgtProjekt; Patch(Projekter; varValgtProjekt; {Navn: txtProjektNavn.Value}))` |
 | Datovælger `dpGoLive` | `Value` | `varValgtProjekt.'Go-live dato'` |
-| | `OnChange` | `Set(varValgtProjekt; Patch(Projekter; varValgtProjekt; {'Go-live dato': dpGoLive.Value}))` |
+| Knap "Gem" | `FillColor` | `clrBrandBlaa` |
+| | `TextColor` | `White` |
+| | `DisplayMode` | `If(IsBlank(txtProjektNavn.Value); DisplayMode.Disabled; DisplayMode.Edit)` |
+| | `OnSelect` | `Set(varValgtProjekt; Patch(Projekter; varValgtProjekt; {Navn: txtProjektNavn.Value; 'Go-live dato': dpGoLive.Value}));; Notify("Projektet er gemt"; NotificationType.Success; 2000)` |
 | Knap "Slet projekt" | `FillColor` | `White` |
 | | `TextColor` | `clrFare` |
 | | `OnSelect` | `Remove(Projekter; varValgtProjekt);; Navigate(scrProjektoversigt)` |
@@ -198,6 +216,11 @@ Skærmens `Fill`: `clrNeutralBaggrund`
 `Patch` returnerer den opdaterede række, så den pakkes ind i `Set` og
 lægges tilbage i `varValgtProjekt` — ellers viser skærmen stadig den gamle
 værdi, indtil man forlader den og kommer tilbage.
+
+Navn og dato gemmes med en **eksplicit gem-knap** frem for via `OnChange`
+på hvert felt. Det koster et klik, men brugeren kan se, hvornår noget er
+gemt — og `Notify` bekræfter det. Med `OnChange` sker gemningen usynligt,
+når man klikker væk, og det er uklart, om ændringen nåede med.
 
 Slet-knappen bruger `clrFare`, ikke `clrStatusUdskudt`: rav betyder
 "udskudt" i aktivitetstabellen, og samme farve må ikke betyde to ting.
@@ -211,7 +234,7 @@ Bekræft-dialog tilføjes under Polering.
   (eller `Blank()` hvis der klikkes på en allerede valgt fase, så filteret
   ryddes).
 - **Afdelingsliste** (galleri `galAfdelinger`):
-  - `Items`: `Filter(Afdelinger; Projekt = varValgtProjekt)`
+  - `Items`: `Filter(Afdelinger; Projekt.Projekt = varValgtProjekt.Projekt)`
   - "+ Tilføj afdeling"-knap → tekstinput +
     `Patch(Afdelinger; Defaults(Afdelinger); {Navn: txtNyAfdeling.Text; Projekt: varValgtProjekt})`
   - Fjern-ikon pr. række → `Remove(Afdelinger; ThisItem)` (med en bekræft-dialog, se Polering)
@@ -226,9 +249,9 @@ Bekræft-dialog tilføjes under Polering.
   Sort(
     Filter(
       Aktiviteter;
-      Projekt = varValgtProjekt;
+      Projekt.Projekt = varValgtProjekt.Projekt;
       IsBlank(varFaseFilter) || Fase = varFaseFilter;
-      IsBlank(varAfdelingFilter) || Afdeling = varAfdelingFilter;
+      IsBlank(varAfdelingFilter) || Afdeling.Afdeling = varAfdelingFilter.Afdeling;
       IsBlank(varStatusFilter) || Status = varStatusFilter
     );
     'Planlagt dato';
@@ -277,7 +300,7 @@ Erstat `Items` på `galProjekter` med:
 ```
 Filter(
   Projekter;
-  Projekt in Filter(ProjektAdgange; Bruger = BrugerNu).Projekt
+  Projekt in Filter(ProjektAdgange; Bruger.Bruger = BrugerNu.Bruger).Projekt
 )
 ```
 
@@ -289,7 +312,7 @@ det trygt at ignorere en eventuel "ikke-delegerbar formel"-advarsel her.)*
 Named formula i `App.Formulas`:
 
 ```
-MinAdgang = LookUp(ProjektAdgange; Projekt = varValgtProjekt && Bruger = BrugerNu);;
+MinAdgang = LookUp(ProjektAdgange; Projekt.Projekt = varValgtProjekt.Projekt && Bruger.Bruger = BrugerNu.Bruger);;
 KanRedigere = ErAdmin || (!IsBlank(MinAdgang) && MinAdgang.Adgangsniveau = 'Adgangsniveau'.Redaktør);;
 ```
 
@@ -304,7 +327,7 @@ Et overlay-panel (`pnlDelProjekt`), synligt når `varVisDelProjekt = true`,
 kun tilgængeligt for admin (`ErAdmin`) eller projektets ejer:
 
 - **Galleri** over eksisterende adgange:
-  `Items: Filter(ProjektAdgange; Projekt = varValgtProjekt)`, med
+  `Items: Filter(ProjektAdgange; Projekt.Projekt = varValgtProjekt.Projekt)`, med
   bruger-navn, adgangsniveau-dropdown (samme `OnChange: Patch`-mønster som
   statusdropdownen), og en fjern-knap (`Remove(ProjektAdgange; ThisItem)`).
 - **Tilføj adgang**: combobox mod `Brugere` (`cbNyBruger`) + choice-vælger
