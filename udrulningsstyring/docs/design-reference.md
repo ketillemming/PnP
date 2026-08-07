@@ -47,6 +47,14 @@ den kølige blå:
 | Gennemført | Grøn `#C8D400` | Grøn — mørk `#5A5F00` (eller sort) |
 | Udskudt | Rav (midlertidig) `#B9822F`, 15 % opacity | Rav `#B9822F` |
 
+**Farvefeltet på choice-muligheder i Dataverse er noget andet.** Dataverse
+lader jer sætte én farve pr. valgmulighed, men den bruges kun i
+tabelvisninger og modeldrevne apps — en Canvas App tegner selv sine
+kontroller og henter farverne fra formlerne. Feltet kan derfor stå tomt.
+Udfyldes det alligevel, så brug én mættet farve pr. status i stedet for de
+lyse baggrundstoner ovenfor: Ikke startet `#9AA3AB`, Planlagt `#6FA8BF`,
+Igangværende `#00668C`, Gennemført `#C8D400`, Udskudt `#B9822F`.
+
 Statusfarverne danner bevidst en trappe fra neutral til grøn: grå (ikke
 begyndt) → lys blå (planlagt) → **fuld blå (i gang)** → grøn (færdig), med
 rav som sidespor for det udskudte. `Igangværende` er den eneste med fuld
