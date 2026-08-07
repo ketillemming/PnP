@@ -32,6 +32,7 @@ den kølige blå:
 | Navn | Hex | Brug |
 |---|---|---|
 | Status: udskudt (midlertidig) | `#B9822F` | Kun "udskudt"-status i aktivitetstabellen |
+| Fare / destruktiv | `#A33A2A` | Slet-knapper og andre uoprettelige handlinger. Kontrast på hvid ≈ 6,6:1. Bevidst en anden farve end rav, så "udskudt" beholder sin betydning — og fordi rav på hvid kun giver ≈ 3,3:1 og dermed er for lys til knaptekst |
 | Neutral baggrund | `#F5F6F7` | Sideindhold, kort-baggrunde |
 | Neutral kant | `#D8DBDE` | Rammer, adskillelseslinjer |
 | Tekst — primær | `#1A1A1A` | Brødtekst |
@@ -91,24 +92,27 @@ separat skrifttype. Sig til, hvis I hellere vil have `Courier New` alligevel.
 
 ## Named formulas til appens tema
 
-Sæt disse som **App.Formulas** i Power Apps Studio (App → Formler i
-venstre panel), så alle skærme refererer til de samme farvenavne i stedet
+Sæt disse som **App.Formulas** i Power Apps Studio (vælg `App` i
+trævisningen, og vælg egenskaben `Formulas`). Bemærk de dobbelte
+semikolonner — dansk formelsprog, se `build-guide.md`, så alle skærme refererer til de samme farvenavne i stedet
 for at hardcode hex-koder hvert sted:
 
 ```
-clrBrandBlaa = ColorValue("#00668C");
-clrBrandBlaaMoerk = ColorValue("#004D69");
-clrBrandGroen = ColorValue("#C8D400");
-clrBrandGroenMoerk = ColorValue("#5A5F00");
-clrStatusUdskudt = ColorValue("#B9822F");
-clrNeutralBaggrund = ColorValue("#F5F6F7");
-clrNeutralKant = ColorValue("#D8DBDE");
-clrTekstPrimaer = ColorValue("#1A1A1A");
-clrTekstSekundaer = ColorValue("#5C6570");
-fontBrand = Font.Arial;
+clrBrandBlaa = ColorValue("#00668C");;
+clrBrandBlaaMoerk = ColorValue("#004D69");;
+clrBrandGroen = ColorValue("#C8D400");;
+clrBrandGroenMoerk = ColorValue("#5A5F00");;
+clrStatusUdskudt = ColorValue("#B9822F");;
+clrFare = ColorValue("#A33A2A");;
+clrNeutralBaggrund = ColorValue("#F5F6F7");;
+clrNeutralKant = ColorValue("#D8DBDE");;
+clrTekstPrimaer = ColorValue("#1A1A1A");;
+clrTekstSekundaer = ColorValue("#5C6570");;
+fontBrand = Font.Arial;;
 ```
 
-Bruges fx som `Fill: clrBrandBlaa` og `Font: fontBrand` på en kontrol,
+Bruges fx som `FillColor: clrBrandBlaa` og `Font: fontBrand` på en kontrol
+(bemærk: moderne kontroller bruger `FillColor`/`TextColor`, ikke `Fill`/`Color`),
 fremfor at gentage hex-koden hvert sted — så kan farverne rettes ét sted,
 hvis I senere får de præcise partner-revision.dk-koder eller vil justere
 "udskudt"-farven.

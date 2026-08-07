@@ -50,6 +50,23 @@ skal oversættes. Symptomet, når man glemmer det, er fejlen *"Operator
 forventet"* eller *"Navnet er ikke gyldigt"* — og fordi en enkelt fejl i
 `App.Formulas` slår **hele** blokken ud, ser det ud som om intet virker.
 
+## Moderne kontroller: andre egenskabsnavne
+
+App'en er bygget med Power Apps' **moderne** kontroller, som er standard i
+Teams. De har andre egenskabsnavne end de klassiske, og ældre vejledninger
+på nettet beskriver næsten altid de klassiske:
+
+| Formål | Moderne (brug denne) | Klassisk |
+|---|---|---|
+| Tekst i et inputfelt | `Value` | `Text` / `Default` |
+| Valgt dato | `Value` | `SelectedDate` / `DefaultDate` |
+| Baggrundsfarve på knap | `FillColor` | `Fill` |
+| Tekstfarve på knap | `TextColor` | `Color` |
+
+Praktisk tip: skriv kontrollens navn efterfulgt af et punktum i
+formellinjen (`txtProjektNavn.`) — så viser Power Apps alle egenskaber,
+kontrollen faktisk har.
+
 ## 0. Opsætning
 
 1. I jeres Team i Microsoft Teams → **Power Apps**-appen → **+ Ny app** →
@@ -70,6 +87,7 @@ forventet"* eller *"Navnet er ikke gyldigt"* — og fordi en enkelt fejl i
    clrBrandGroen = ColorValue("#C8D400");;
    clrBrandGroenMoerk = ColorValue("#5A5F00");;
    clrStatusUdskudt = ColorValue("#B9822F");;
+   clrFare = ColorValue("#A33A2A");;
    clrNeutralBaggrund = ColorValue("#F5F6F7");;
    clrNeutralKant = ColorValue("#D8DBDE");;
    clrTekstPrimaer = ColorValue("#1A1A1A");;
@@ -107,7 +125,7 @@ Skærmens `Fill`: `clrNeutralBaggrund`
 - **Overskrift** (tekstetiket): `Text` = `"Udrulning & planlægning"`,
   `Font` = `fontBrand`, `Size` = `28`, `FontWeight` = `FontWeight.Bold`,
   `Color` = `clrBrandBlaa`.
-- **Knap "+ Nyt projekt"** (`Fill` = `clrBrandBlaa`, `Color` = `White`):
+- **Knap "+ Nyt projekt"** (`FillColor` = `clrBrandBlaa`, `TextColor` = `White`):
 
   ```
   OnSelect:
@@ -154,6 +172,32 @@ A-D-K-A-R og klik-til-filter (se nedenfor).
 Bemærk: kun `Gennemført` tæller med. `Igangværende` tæller som ikke-færdig.
 
 ### Skærm: scrProjekt
+
+Skærmens `Fill`: `clrNeutralBaggrund`
+
+**Projekthoved — bygges først.** Uden det kan de auto-oprettede
+"Nyt projekt"-rækker hverken navngives eller slettes.
+
+| Kontrol | Egenskab | Værdi |
+|---|---|---|
+| Knap "← Tilbage" | `OnSelect` | `Navigate(scrProjektoversigt)` |
+| Tekstinput `txtProjektNavn` | `Value` | `varValgtProjekt.Navn` |
+| | `OnChange` | `Set(varValgtProjekt; Patch(Projekter; varValgtProjekt; {Navn: txtProjektNavn.Value}))` |
+| Datovælger `dpGoLive` | `Value` | `varValgtProjekt.'Go-live dato'` |
+| | `OnChange` | `Set(varValgtProjekt; Patch(Projekter; varValgtProjekt; {'Go-live dato': dpGoLive.Value}))` |
+| Knap "Slet projekt" | `FillColor` | `White` |
+| | `TextColor` | `clrFare` |
+| | `OnSelect` | `Remove(Projekter; varValgtProjekt);; Navigate(scrProjektoversigt)` |
+
+`Patch` returnerer den opdaterede række, så den pakkes ind i `Set` og
+lægges tilbage i `varValgtProjekt` — ellers viser skærmen stadig den gamle
+værdi, indtil man forlader den og kommer tilbage.
+
+Slet-knappen bruger `clrFare`, ikke `clrStatusUdskudt`: rav betyder
+"udskudt" i aktivitetstabellen, og samme farve må ikke betyde to ting.
+Bekræft-dialog tilføjes under Polering.
+
+**Resten af projektsiden:**
 
 - **Header**: `varValgtProjekt.Navn` (24px, Bold, `fontBrand`).
 - **`cmpAdkarSkinne`** i fuld størrelse, med output-property `ValgtFase`,
