@@ -63,6 +63,12 @@ på nettet beskriver næsten altid de klassiske:
 | Baggrundsfarve på knap | `FillColor` | `Fill` |
 | Tekstfarve på knap | `TextColor` | `Color` |
 
+Kanter styres fortsat af `BorderColor` **sammen med** `BorderThickness` —
+og `BorderColor` alene gør ingenting, hvis tykkelsen er `0`. Egenskaben
+`Appearance` (Fluent-stilarterne Primary/Outline/Subtle) findes **ikke** i
+denne udgave af kontrollerne, så knapstil sættes med `FillColor`,
+`TextColor`, `BorderColor` og `BorderThickness`.
+
 Praktisk tip: skriv kontrollens navn efterfulgt af et punktum i
 formellinjen (`txtProjektNavn.`) — så viser Power Apps alle egenskaber,
 kontrollen faktisk har.
