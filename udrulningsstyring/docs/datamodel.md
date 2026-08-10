@@ -160,11 +160,15 @@ faser i præcis denne rækkefølge, så de auto-tildelte værdier stiger i
 ADKAR-rækkefølge og kan sorteres korrekt i UI'et.
 | Værdi | Label | Bogstav på skinnen |
 |---|---|---|
-| 1 | Bevidsthed (Awareness) | A |
-| 2 | Ønske (Desire) | D |
-| 3 | Viden (Knowledge) | K |
-| 4 | Evne (Ability) | A |
-| 5 | Fastholdelse (Reinforcement) | R |
+| 1 | Bevidsthed | A |
+| 2 | Ønske | D |
+| 3 | Viden | K |
+| 4 | Evne | A |
+| 5 | Fastholdelse | R |
+
+Etiketterne er rene danske ord uden de engelske ADKAR-ord i parentes.
+Bogstavet i højre kolonne er det, ADKAR-skinnen viser — det kan derfor
+ikke udledes af etiketten og skal oversættes med en `Switch` i UI'et.
 
 **Globalt valg: `Aktivitetstype`** (bruges af `Aktivitet.Type`)
 | Værdi | Label | Svarer til |
