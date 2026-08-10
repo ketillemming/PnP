@@ -143,14 +143,14 @@ projektoversigten eller åbne det direkte.
 |---|---|---|---|
 | (primærnøgle, auto) | Aktivitet | Unikt tekst-id | |
 | `{prefix}_projekt` | Projekt | Lookup → Projekt, påkrævet | |
-| `{prefix}_fase` | Fase | Choice, påkrævet | ADKAR-fase, se nedenfor |
-| `{prefix}_type` | Type | Choice, påkrævet | Se nedenfor |
+| `{prefix}_fase` | Fase | Choice, påkrævet | Globalt valg `ADKARfase`, se nedenfor |
+| `{prefix}_type` | Aktivitetstype | Choice, påkrævet | Globalt valg `Aktivitetstype`, se nedenfor. Kolonne og valgliste har samme navn — det er tilladt, men i Power Fx er `Aktivitetstype` (uden anførselstegn) kolonnen, og `'Aktivitetstype'` (med) valglisten |
 | `{prefix}_afdeling` | Afdeling | Lookup → Afdeling, valgfri | Tom = gælder alle afdelinger |
 | `{prefix}_beskrivelse` | Beskrivelse | Tekst (flere linjer), påkrævet | |
 | `{prefix}_ansvarligbruger` | Ansvarlig (bruger) | Lookup → Bruger, valgfri | |
 | `{prefix}_ansvarligfritekst` | Ansvarlig (fritekst) | Tekst (enkelt linje), valgfri | Bruges når den ansvarlige ikke er bruger i systemet — udfyld enten dette eller "Ansvarlig (bruger)", ikke begge |
 | `{prefix}_planlagtdato` | Planlagt dato | Kun dato, valgfri | |
-| `{prefix}_status` | Status | Choice, påkrævet | Se nedenfor |
+| `{prefix}_status` | Aktivitetsstatus | Choice, påkrævet | Globalt valg `Aktivitetsstatus`, se nedenfor. **Må ikke hedde blot `Status`** — hver Dataverse-tabel har allerede systemkolonnerne `Status` og `Statusårsag`, og navnet bliver da tvetydigt: Power Fx melder "den angivne kolonne findes ikke" |
 
 (Oprettelses-/ændringstidspunkt dækkes af systemkolonnerne `Oprettet den` og
 `Ændret den`.)

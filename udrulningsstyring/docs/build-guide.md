@@ -181,7 +181,7 @@ For hver af de 5 faser beregnes andel gennemført:
 ```
 With(
   {AktiviteterIFase: Filter(Aktiviteter; Projekt.Projekt = ProjektRecord.Projekt && Fase = <fase-værdi>)};
-  CountRows(Filter(AktiviteterIFase; Status = 'Aktivitetsstatus'.Gennemført))
+  CountRows(Filter(AktiviteterIFase; Aktivitetsstatus = 'Aktivitetsstatus'.Gennemført))
     / Max(1; CountRows(AktiviteterIFase))
 )
 ```
@@ -252,7 +252,7 @@ Bekræft-dialog tilføjes under Polering.
       Projekt.Projekt = varValgtProjekt.Projekt;
       IsBlank(varFaseFilter) || Fase = varFaseFilter;
       IsBlank(varAfdelingFilter) || Afdeling.Afdeling = varAfdelingFilter.Afdeling;
-      IsBlank(varStatusFilter) || Status = varStatusFilter
+      IsBlank(varStatusFilter) || Aktivitetsstatus = varStatusFilter
     );
     'Planlagt dato';
     SortOrder.Ascending
@@ -266,9 +266,9 @@ Bekræft-dialog tilføjes under Polering.
 
     ```
     // Dropdown 'ddStatus' i galleri-skabelonen
-    Items: Choices(Aktiviteter.Status)
-    Default: ThisItem.Status
-    OnChange: Patch(Aktiviteter; ThisItem; {Status: ddStatus.Selected})
+    Items: Choices(Aktiviteter.Aktivitetsstatus)
+    Value: ThisItem.Aktivitetsstatus
+    OnChange: Patch(Aktiviteter; ThisItem; {Aktivitetsstatus: ddStatus.Selected})
     ```
 
     Farvelæg badgen efter tabellen i `design-reference.md` (Statusfarver).
