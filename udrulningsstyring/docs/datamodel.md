@@ -160,15 +160,16 @@ faser i præcis denne rækkefølge, så de auto-tildelte værdier stiger i
 ADKAR-rækkefølge og kan sorteres korrekt i UI'et.
 | Værdi | Label | Bogstav på skinnen |
 |---|---|---|
-| 1 | Bevidsthed | A |
-| 2 | Ønske | D |
-| 3 | Viden | K |
-| 4 | Evne | A |
-| 5 | Fastholdelse | R |
+| 1 | Awareness | A |
+| 2 | Desire | D |
+| 3 | Knowledge | K |
+| 4 | Ability | A |
+| 5 | Reinforcement | R |
 
-Etiketterne er rene danske ord uden de engelske ADKAR-ord i parentes.
-Bogstavet i højre kolonne er det, ADKAR-skinnen viser — det kan derfor
-ikke udledes af etiketten og skal oversættes med en `Switch` i UI'et.
+Faserne bruger ADKAR-modellens engelske originalnavne — resten af UI'et er
+dansk, men fasenavnene er modellens egne fagudtryk. Praktisk fordel:
+bogstavet på ADKAR-skinnen er etikettens forbogstav, så det kan hentes med
+`Left(Text(ThisItem.Fase); 1)` i stedet for en oversættelsestabel.
 
 **Globalt valg: `Aktivitetstype`** (bruges af `Aktivitet.Type`)
 | Værdi | Label | Svarer til |

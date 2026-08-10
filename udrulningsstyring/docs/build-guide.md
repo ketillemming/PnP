@@ -89,6 +89,22 @@ Læses som: "afdelingens projekt-opslag, dets id" = "det valgte projekts id".
 Det gælder **kun ved sammenligning**. Når en værdi *tildeles* i `Patch`,
 skal hele rækken bruges — `{Projekt: varValgtProjekt}`, ikke id'et.
 
+## Navnene på de globale valglister
+
+Power Apps refererer globale valglister i **flertal**, uanset hvad de blev
+navngivet som i Dataverse. De hedder derfor `'ADKARfaser'`,
+`'Aktivitetstyper'` og `'Aktivitetsstatusser'` i formler — ikke ental.
+
+Fejlteksten røber det selv: *"matcher ikke den forventede type
+optionsetvalue (ADKARfaser)"*. Er du i tvivl, så skriv et enkelt
+anførselstegn `'` i formellinjen — så viser Power Apps alle navne, den
+kender i den skrivemåde — og et punktum efter navnet for at se
+valgmulighederne.
+
+Vil I helt undgå spørgsmålet, kan valgmuligheden hentes gennem kolonnen i
+stedet: `LookUp(Choices(Aktiviteter.Fase); Value = "Awareness")`. Længere,
+men uafhængig af valglistens navn.
+
 ## 0. Opsætning
 
 1. I jeres Team i Microsoft Teams → **Power Apps**-appen → **+ Ny app** →
@@ -258,6 +274,20 @@ Bekræft-dialog tilføjes under Polering.
     SortOrder.Ascending
   )
   ```
+
+  Hurtig-opret-knap ("+ Ny aktivitet") — alle påkrævede felter skal have en
+  værdi, ellers afviser Dataverse rækken:
+
+  ```
+  Patch(Aktiviteter; Defaults(Aktiviteter);
+    {Navn: "Ny aktivitet"; Beskrivelse: "Ny aktivitet"; Projekt: varValgtProjekt;
+     Fase: 'ADKARfaser'.Awareness;
+     Aktivitetstype: 'Aktivitetstyper'.Kommunikation;
+     Aktivitetsstatus: 'Aktivitetsstatusser'.'Ikke startet'})
+  ```
+
+  Bogstavet til fase-badgen er etikettens forbogstav, da faserne bruger de
+  engelske ADKAR-navne: `Left(Text(ThisItem.Fase); 1)`.
 
   - Kolonner: Fase (bogstav-badge), Type, Beskrivelse (afkortet), Afdeling
     (eller "Alle afdelinger" hvis tom), Ansvarlig
