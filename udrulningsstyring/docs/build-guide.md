@@ -73,6 +73,31 @@ Praktisk tip: skriv kontrollens navn efterfulgt af et punktum i
 formellinjen (`txtProjektNavn.`) — så viser Power Apps alle egenskaber,
 kontrollen faktisk har.
 
+### Kombinationsfelt til valglister
+
+Der findes ingen brugbar rullemenu i denne udgave — "listefelt" viser alle
+muligheder på én gang og fylder for meget i en tabelrække. Brug et
+**kombinationsfelt**:
+
+| Egenskab | Værdi |
+|---|---|
+| `Items` | `Choices(Aktiviteter.Aktivitetsstatus)` |
+| `DefaultSelectedItems` | `Filter(Choices(Aktiviteter.Aktivitetsstatus); Value = Text(ThisItem.Aktivitetsstatus))` |
+| `AllowMultipleSelection` | `false` (hedder ikke `SelectMultiple`) |
+| `OnChange` | `Patch(Aktiviteter; ThisItem; {Aktivitetsstatus: ddStatus.Selected.Value})` |
+
+To faldgruber:
+
+- `DefaultSelectedItems` forventer en **tabel**, ikke én værdi. Derfor
+  `Filter(...)`, som giver en tabel med præcis én række — ikke `LookUp`,
+  som giver en enkelt række.
+- `.Selected` er hele rækken fra `Choices()`; kolonnen vil have værdien
+  indeni. Derfor `.Selected.Value`, ellers kommer fejlen *"matcher ikke den
+  forventede type OptionSetValue. Fandt type Record"*.
+
+Brug `OnChange`, ikke `OnSelect` — sidstnævnte udløses allerede når man
+åbner feltet.
+
 ## Sammenligning af rækker: brug id, ikke hele rækken
 
 Power Fx kan ikke sammenligne to hele rækker med `=` — det giver fejlen
@@ -114,7 +139,8 @@ men uafhængig af valglistens navn.
    `Projekter`, `Afdelinger`, `ProjektAdgange`, `Aktiviteter`.
    Globale valglister (`Rolletype`, `Adgangsniveau`, `ADKARfase`,
    `Aktivitetstype`, `Aktivitetsstatus`) skal **ikke** tilføjes separat —
-   de følger automatisk med de tabeller, der bruger dem.
+   de følger automatisk med de tabeller, der bruger dem. Bemærk at de
+   refereres i flertal i formler, se afsnittet om valglisternes navne.
 3. Vælg **App** i trævisningen, og vælg egenskaben **Formulas** i
    rullelisten øverst til venstre (den viser `StartScreen`, når App er
    markeret). Indsæt hele temaet og brugeropslaget her:
@@ -295,11 +321,15 @@ Bekræft-dialog tilføjes under Polering.
     Planlagt dato, **Status som dropdown direkte i tabellen**:
 
     ```
-    // Dropdown 'ddStatus' i galleri-skabelonen
+    // Kombinationsfelt 'ddStatus' i galleri-skabelonen
     Items: Choices(Aktiviteter.Aktivitetsstatus)
-    Value: ThisItem.Aktivitetsstatus
-    OnChange: Patch(Aktiviteter; ThisItem; {Aktivitetsstatus: ddStatus.Selected})
+    DefaultSelectedItems: Filter(Choices(Aktiviteter.Aktivitetsstatus); Value = Text(ThisItem.Aktivitetsstatus))
+    AllowMultipleSelection: false
+    OnChange: Patch(Aktiviteter; ThisItem; {Aktivitetsstatus: ddStatus.Selected.Value})
     ```
+
+    Kombinationsfeltet får `Height` 40 mod etiketternes 24, så det kan
+    rammes med musen. Begge er stadig lodret centreret i en række på 56.
 
     Farvelæg badgen efter tabellen i `design-reference.md` (Statusfarver).
 - **"+ Tilføj aktivitet"**-formular (separat panel/modal, `frmNyAktivitet`,
