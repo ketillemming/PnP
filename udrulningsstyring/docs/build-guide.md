@@ -87,33 +87,30 @@ Text(ThisItem.Aktivitetsstatus)        // "934"           — næsten aldrig det
 Symptomet er tal i UI'et, hvor man forventede ord. Skal en valgværdi bruges
 som tekst — til sammenligning, sammenkædning eller visning — så brug `& ""`.
 
-### Kombinationsfelt til valglister
+### Valglister i UI'et: vis som tekst, vælg i et panel
 
-Der findes ingen brugbar rullemenu i denne udgave — "listefelt" viser alle
-muligheder på én gang og fylder for meget i en tabelrække. Brug et
-**kombinationsfelt**:
+Kontrollerne i denne udgave har ingen brugbar rullemenu, og
+**kombinationsfeltet kan ikke gengive tekst** — det viser valglisternes
+interne tal, uanset hvad `Items` fodres med. Det gælder også en håndskrevet
+liste af rene tekststrenge, så det er kontrollen og ikke dataene, der er
+problemet. Den har hverken `Felter`, `DisplayFields` eller `SearchFields`
+at stille om på.
+
+Konsekvens for designet: **valgværdier vises som tekstetiketter**, og selve
+valget træffes i et redigeringspanel frem for direkte i tabelrækken. En
+etiket bundet direkte til kolonnen viser etiketteksten korrekt:
 
 | Egenskab | Værdi |
 |---|---|
-| `Items` | `ForAll(Choices(Aktiviteter.Aktivitetsstatus); {Etiket: Value & ""})` |
-| `DefaultSelectedItems` | `Filter(ForAll(Choices(Aktiviteter.Aktivitetsstatus); {Etiket: Value & ""}); Etiket = ThisItem.Aktivitetsstatus & "")` |
-| `AllowMultipleSelection` | `false` (hedder ikke `SelectMultiple`) |
-| `OnChange` | `Patch(Aktiviteter; ThisItem; {Aktivitetsstatus: LookUp(Choices(Aktiviteter.Aktivitetsstatus); (Value & "") = ddStatus.Selected.Etiket).Value})` |
+| `Text` | `ThisItem.Aktivitetsstatus` |
+| `Color` | `Switch(ThisItem.Aktivitetsstatus; 'Aktivitetsstatus'.Gennemført; clrBrandGroenMoerk; 'Aktivitetsstatus'.Udskudt; clrStatusUdskudt; 'Aktivitetsstatus'.Igangværende; clrBrandBlaa; 'Aktivitetsstatus'.Planlagt; clrBrandBlaa; clrTekstSekundaer)` |
 
-Tre faldgruber:
+`Switch` sammenligner valgværdi med valgværdi — ingen omregning til tekst,
+og dermed ingen tal.
 
-- Kontrollen har hverken `Felter`, `DisplayFields` eller `SearchFields` i
-  denne udgave, så den kan ikke få at vide, hvilken kolonne den skal vise.
-  Derfor bygges listen om med `ForAll` til én ren tekstkolonne — så er der
-  intet at vælge forkert. Uden det vises valglisternes tal.
-- `DefaultSelectedItems` forventer en **tabel**, ikke én værdi. Derfor
-  `Filter(...)`, som giver en tabel med præcis én række — ikke `LookUp`,
-  som giver en enkelt række.
-- Fordi listen nu er tekst, må `OnChange` finde tilbage til valgværdien med
-  `LookUp`. Kolonnen i Dataverse indeholder fortsat en valgværdi, ikke tekst.
-
-Brug `OnChange`, ikke `OnSelect` — sidstnævnte udløses allerede når man
-åbner feltet.
+**Afvigelse fra brief'en:** kravet om at kunne skifte status direkte i
+aktivitetstabellen er udskudt til redigeringspanelet, indtil der er fundet
+en kontrol, der kan vise etiketter.
 
 ## Sammenligning af rækker: brug id, ikke hele rækken
 
@@ -133,19 +130,16 @@ skal hele rækken bruges — `{Projekt: varValgtProjekt}`, ikke id'et.
 
 ## Navnene på de globale valglister
 
-Power Apps refererer globale valglister i **flertal**, uanset hvad de blev
-navngivet som i Dataverse. De hedder derfor `'ADKARfaser'`,
-`'Aktivitetstyper'` og `'Aktivitetsstatusser'` i formler — ikke ental.
+Valglisten refereres med det navn, den har i Dataverse — hverken mere eller
+mindre. I dette projekt er det `'ADKARfaser'` (som blev navngivet i flertal)
+og `'Aktivitetstype'` / `'Aktivitetsstatus'` (ental). Der er altså ikke nogen
+regel om flertal; man skal bare bruge det faktiske navn.
 
-Fejlteksten røber det selv: *"matcher ikke den forventede type
-optionsetvalue (ADKARfaser)"*. Er du i tvivl, så skriv et enkelt
-anførselstegn `'` i formellinjen — så viser Power Apps alle navne, den
-kender i den skrivemåde — og et punktum efter navnet for at se
+Fejlteksten røber navnet, når man rammer forkert: *"matcher ikke den
+forventede type optionsetvalue (ADKARfaser)"*. Er du i tvivl, så skriv et
+enkelt anførselstegn `'` i formellinjen — så viser Power Apps alle navne,
+den kender i den skrivemåde — og et punktum efter navnet for at se
 valgmulighederne.
-
-Vil I helt undgå spørgsmålet, kan valgmuligheden hentes gennem kolonnen i
-stedet: `LookUp(Choices(Aktiviteter.Fase); Value = "Awareness")`. Længere,
-men uafhængig af valglistens navn.
 
 ## 0. Opsætning
 
@@ -156,8 +150,8 @@ men uafhængig af valglistens navn.
    `Projekter`, `Afdelinger`, `ProjektAdgange`, `Aktiviteter`.
    Globale valglister (`Rolletype`, `Adgangsniveau`, `ADKARfase`,
    `Aktivitetstype`, `Aktivitetsstatus`) skal **ikke** tilføjes separat —
-   de følger automatisk med de tabeller, der bruger dem. Bemærk at de
-   refereres i flertal i formler, se afsnittet om valglisternes navne.
+   de følger automatisk med de tabeller, der bruger dem. Navnet i Dataverse
+   er også navnet i formler — se afsnittet om valglisternes navne.
 3. Vælg **App** i trævisningen, og vælg egenskaben **Formulas** i
    rullelisten øverst til venstre (den viser `StartScreen`, når App er
    markeret). Indsæt hele temaet og brugeropslaget her:
@@ -325,8 +319,8 @@ Bekræft-dialog tilføjes under Polering.
   Patch(Aktiviteter; Defaults(Aktiviteter);
     {Navn: "Ny aktivitet"; Beskrivelse: "Ny aktivitet"; Projekt: varValgtProjekt;
      Fase: 'ADKARfaser'.Awareness;
-     Aktivitetstype: 'Aktivitetstyper'.Kommunikation;
-     Aktivitetsstatus: 'Aktivitetsstatusser'.'Ikke startet'})
+     Aktivitetstype: 'Aktivitetstype'.Kommunikation;
+     Aktivitetsstatus: 'Aktivitetsstatus'.'Ikke startet'})
   ```
 
   Bogstavet til fase-badgen er etikettens forbogstav, da faserne bruger de
