@@ -73,6 +73,20 @@ Praktisk tip: skriv kontrollens navn efterfulgt af et punktum i
 formellinjen (`txtProjektNavn.`) — så viser Power Apps alle egenskaber,
 kontrollen faktisk har.
 
+### Valgværdier som tekst: brug `& ""`, ikke `Text()`
+
+`Text()` på en valgværdi returnerer det **underliggende tal** (fx `934`),
+ikke etiketten. Den underforståede omregning giver derimod etiketten:
+
+```
+ThisItem.Aktivitetsstatus              // "Igangværende"  — i en etikets Text
+ThisItem.Aktivitetsstatus & ""         // "Igangværende"  — som tekst i en formel
+Text(ThisItem.Aktivitetsstatus)        // "934"           — næsten aldrig det, man vil
+```
+
+Symptomet er tal i UI'et, hvor man forventede ord. Skal en valgværdi bruges
+som tekst — til sammenligning, sammenkædning eller visning — så brug `& ""`.
+
 ### Kombinationsfelt til valglister
 
 Der findes ingen brugbar rullemenu i denne udgave — "listefelt" viser alle
@@ -81,19 +95,22 @@ muligheder på én gang og fylder for meget i en tabelrække. Brug et
 
 | Egenskab | Værdi |
 |---|---|
-| `Items` | `Choices(Aktiviteter.Aktivitetsstatus)` |
-| `DefaultSelectedItems` | `Filter(Choices(Aktiviteter.Aktivitetsstatus); Value = Text(ThisItem.Aktivitetsstatus))` |
+| `Items` | `ForAll(Choices(Aktiviteter.Aktivitetsstatus); {Etiket: Value & ""})` |
+| `DefaultSelectedItems` | `Filter(ForAll(Choices(Aktiviteter.Aktivitetsstatus); {Etiket: Value & ""}); Etiket = ThisItem.Aktivitetsstatus & "")` |
 | `AllowMultipleSelection` | `false` (hedder ikke `SelectMultiple`) |
-| `OnChange` | `Patch(Aktiviteter; ThisItem; {Aktivitetsstatus: ddStatus.Selected.Value})` |
+| `OnChange` | `Patch(Aktiviteter; ThisItem; {Aktivitetsstatus: LookUp(Choices(Aktiviteter.Aktivitetsstatus); (Value & "") = ddStatus.Selected.Etiket).Value})` |
 
-To faldgruber:
+Tre faldgruber:
 
+- Kontrollen har hverken `Felter`, `DisplayFields` eller `SearchFields` i
+  denne udgave, så den kan ikke få at vide, hvilken kolonne den skal vise.
+  Derfor bygges listen om med `ForAll` til én ren tekstkolonne — så er der
+  intet at vælge forkert. Uden det vises valglisternes tal.
 - `DefaultSelectedItems` forventer en **tabel**, ikke én værdi. Derfor
   `Filter(...)`, som giver en tabel med præcis én række — ikke `LookUp`,
   som giver en enkelt række.
-- `.Selected` er hele rækken fra `Choices()`; kolonnen vil have værdien
-  indeni. Derfor `.Selected.Value`, ellers kommer fejlen *"matcher ikke den
-  forventede type OptionSetValue. Fandt type Record"*.
+- Fordi listen nu er tekst, må `OnChange` finde tilbage til valgværdien med
+  `LookUp`. Kolonnen i Dataverse indeholder fortsat en valgværdi, ikke tekst.
 
 Brug `OnChange`, ikke `OnSelect` — sidstnævnte udløses allerede når man
 åbner feltet.
