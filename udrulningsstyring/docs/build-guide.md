@@ -244,6 +244,82 @@ Skærmens `Fill`: `clrNeutralBaggrund`
   - `OnSelect` på skabelonen:
     `Set(varValgtProjekt; ThisItem);; Navigate(scrProjekt)`
 
+**ADKAR-skinnen** — bygget som et **vandret galleri** (`galAdkar`) frem for
+en komponent. Galleriet løber over `Choices(Aktiviteter.Fase)`, så de fem
+cirkler kommer af sig selv og altid står i fasernes rækkefølge.
+
+| Kontrol | Egenskab | Værdi |
+|---|---|---|
+| `galAdkar` | `Items` | `Choices(Aktiviteter.Fase)` |
+| | `TemplateSize` | `130` (i et vandret galleri er dette elementets **bredde**) |
+| | `ShowScrollbar` | `false` |
+| `shpFase` (cirkel) | `Fill` | `With({ialt: CountRows(Filter(Aktiviteter; Projekt.Projekt = varValgtProjekt.Projekt; Fase = ThisItem.Value))}; If(ialt = 0; clrNeutralBaggrund; ColorFade(clrBrandGroen; 1 - CountRows(Filter(Aktiviteter; Projekt.Projekt = varValgtProjekt.Projekt; Fase = ThisItem.Value; Aktivitetsstatus = [@'Aktivitetsstatus'].Gennemført)) / ialt)))` |
+| | `BorderColor` | `If(varFaseFilter = ThisItem.Value; clrBrandBlaa; clrNeutralKant)` |
+| | `BorderThickness` | `If(varFaseFilter = ThisItem.Value; 3; 1)` |
+| | `OnSelect` | `Set(varFaseFilter; If(varFaseFilter = ThisItem.Value; Blank(); ThisItem.Value))` |
+| `lblFaseBogstav` | `Text` | `Switch(ThisItem.Value; 'ADKARfaser'.Awareness; "A"; 'ADKARfaser'.Desire; "D"; 'ADKARfaser'.Knowledge; "K"; 'ADKARfaser'.Ability; "A"; 'ADKARfaser'.Reinforcement; "R")` |
+| `lblFaseAntal` | `Text` | `With({ialt: CountRows(Filter(Aktiviteter; Projekt.Projekt = varValgtProjekt.Projekt; Fase = ThisItem.Value))}; CountRows(Filter(Aktiviteter; Projekt.Projekt = varValgtProjekt.Projekt; Fase = ThisItem.Value; Aktivitetsstatus = [@'Aktivitetsstatus'].Gennemført)) & "/" & ialt)` |
+
+Placering inde i elementet: `shpFase` 35/8 (60×60), `lblFaseBogstav` 35/20
+(60×36), `lblFaseAntal` 20/65 (90×25).
+
+**Fyldningen er farvestyrke, ikke fyldningsgrad.** `ColorFade` lysner den
+grønne efter, hvor lidt der er gennemført — ingen gennemførte giver næsten
+hvid, alle gennemførte giver fuld grøn. Brief'en beskriver cirkler, der
+fyldes op; dette er en forenkling, som er væsentligt enklere at bygge og
+aflæses lige så hurtigt. Tælleren under cirklen ("2/5") giver det præcise tal.
+
+Kun `Gennemført` tæller med. `Igangværende` tæller som ikke-færdig.
+
+Klik på en cirkel sætter `varFaseFilter` og filtrerer aktivitetstabellen;
+klik på den samme cirkel igen rydder filteret. Den valgte fase markeres med
+en blå kant frem for med farve, så markeringen ikke forveksles med
+fyldningsgraden.
+
+To ting, der koster tid, hvis man overser dem:
+
+- Kontroller **skal indsættes inde i galleriets skabelon**, ellers findes
+  `ThisItem` ikke, og alle formler bliver til fejl. Kontrollér i
+  trævisningen, at de står indrykket under galleriet.
+- Skriv den formel, der **sætter** en variabel (`OnSelect`), før dem der
+  **læser** den (`BorderColor`). Power Apps kender først et variabelnavn,
+  når der findes et `Set()` for det.
+- Slå **ombrydning** fra på etiketter med ét ord eller tegn. Med ombrydning
+  reserveres plads til en ekstra linje, og teksten forskydes opad.
+
+### Skærm: scrProjektoversigt
+
+Skærmens `Fill`: `clrNeutralBaggrund`
+
+- **Overskrift** (tekstetiket): `Text` = `"Udrulning & planlægning"`,
+  `Font` = `fontBrand`, `Size` = `28`, `FontWeight` = `FontWeight.Bold`,
+  `Color` = `clrBrandBlaa`.
+- **Knap "+ Nyt projekt"** (`FillColor` = `clrBrandBlaa`, `TextColor` = `White`):
+
+  ```
+  OnSelect:
+  Patch(Projekter; Defaults(Projekter); {Navn: "Nyt projekt"; Projektejer: BrugerNu})
+  ```
+
+  Adgangsbegrænsning lægges på i milepæl 3.
+- **Galleri `galProjekter`** (lodret, layout "Titel og undertekst"):
+  - `Items`: `Sort(Projekter; Navn)`
+  - `TemplateSize`: `88`
+  - `Title1.Text`: `ThisItem.Navn` (`fontBrand`, `clrTekstPrimaer`)
+  - `Subtitle1.Text` (`fontBrand`, `clrTekstSekundaer`):
+
+    ```
+    If(
+      IsBlank(ThisItem.'Go-live dato');
+      "Ingen go-live dato";
+      "Go-live: " & Text(ThisItem.'Go-live dato'; DateTimeFormat.ShortDate)
+    )
+    ```
+
+  - Plus et lille ADKAR-statuslys pr. række (se boks nedenfor)
+  - `OnSelect` på skabelonen:
+    `Set(varValgtProjekt; ThisItem);; Navigate(scrProjekt)`
+
 **ADKAR-statuslys (mini)** — genbrug som Power Apps **Komponent**
 (`cmpAdkarSkinne`), så den samme logik bruges både her (lille) og på
 projektsiden (stor). Inputs: `ProjektRecord` (post), `Kompakt` (boolean).
