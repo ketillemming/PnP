@@ -42,9 +42,44 @@ klik-arbejde:
 
 ## Status
 
-Fundament (milepæl 1): datamodel, provisioneringsscript og designreference
-er klar. Byggeguiden dækker milepæl 2-5. Se `docs/build-guide.md` for
-næste skridt.
+**Færdigt:**
+
+- Milepæl 1 — Dataverse for Teams-tabellerne er oprettet og virker
+  end-to-end.
+- Milepæl 2 — projektoversigt, projektside, afdelinger og aktivitetstabel
+  med redigeringspanel. Aktiviteter kan oprettes, rettes og slettes.
+- ADKAR-skinnen med farvegraderede faser, tæller pr. fase og klik-til-filter.
+- Milepæl 3, delvist — adgang oprettes automatisk til den, der opretter et
+  projekt, og projektoversigten filtreres efter adgang (administratorer ser
+  alt). `MinAdgang` og `KanRedigere` er defineret i `App.Formulas`.
+
+**Næste skridt, i rækkefølge:**
+
+1. **Papirkurv-ikonet i `galAdgange` skal laves om** — det blev indsat i det
+   forkerte galleri og skal slettes og oprettes inde i `galAdgange`.
+   `OnSelect`: `Remove(ProjektAdgange; ThisItem)`.
+2. Færdiggør "Del projekt"-panelet (brugerliste, niveauliste, "Giv adgang",
+   luk-knap) — se `docs/build-guide.md`.
+3. Håndhæv `KanRedigere`: sæt `DisplayMode` på knapper og felter, så læsere
+   kun kan se.
+4. `scrAdmin` til at oprette brugere og sætte roller.
+5. Resterende filtre over aktivitetstabellen (afdeling, status) samt
+   ADKAR-statuslys pr. række i projektoversigten.
+6. Polering og publicering (milepæl 4-5).
+
+## Kendte begrænsninger
+
+- **Statusskift kan ikke ske direkte i aktivitetstabellen.** Kontrollerne i
+  denne udgave af Power Apps har ingen vælger, der kan gengive tekst, så
+  status vises som etiket og ændres i redigeringspanelet. Afviger fra
+  brief'en.
+- **Delegeringsadvarsel på projektoversigtens filter.** Filtreringen sker
+  lokalt på de første 500 rækker (kan hæves til 2000 under Indstillinger).
+  Uproblematisk ved det forventede antal projekter, men værd at kende, hvis
+  `Aktiviteter` en dag vokser markant.
+- **ADKAR-cirklerne viser fyldningsgrad som farvestyrke**, ikke som en
+  cirkel der fyldes op. Forenkling i forhold til brief'en; tælleren under
+  cirklen giver det præcise tal.
 
 ## Åbne/antagne punkter (bør bekræftes)
 
