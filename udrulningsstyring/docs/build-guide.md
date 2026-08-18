@@ -141,6 +141,24 @@ enkelt anførselstegn `'` i formellinjen — så viser Power Apps alle navne,
 den kender i den skrivemåde — og et punktum efter navnet for at se
 valgmulighederne.
 
+## Navnesammenfald inde i Filter og LookUp: brug `[@...]`
+
+Kolonnerne `Aktivitetstype` og `Aktivitetsstatus` hedder det samme som de
+valglister, de bruger. Inde i en `Filter` eller `LookUp` over `Aktiviteter`
+vinder **kolonnen** — så `'Aktivitetsstatus'.Gennemført` slår op i kolonnen
+i stedet for i valglisten og bliver til en fejlværdi.
+
+Skriv `[@...]` for at hente navnet uden for tabellens rækkevidde:
+
+```
+Filter(Aktiviteter; Aktivitetsstatus = [@'Aktivitetsstatus'].Gennemført)   // virker
+Filter(Aktiviteter; Aktivitetsstatus = 'Aktivitetsstatus'.Gennemført)      // fejler
+```
+
+Det gælder kun inde i tabel-scope. I en `Patch` er der ingen tabel til at
+skygge for navnet, så dér virker `'Aktivitetsstatus'.'Ikke startet'` fint —
+hvilket gør fejlen forvirrende, når man møder den første gang.
+
 ## 0. Opsætning
 
 1. I jeres Team i Microsoft Teams → **Power Apps**-appen → **+ Ny app** →
