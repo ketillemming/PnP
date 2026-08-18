@@ -117,6 +117,27 @@ fremfor at gentage hex-koden hvert sted — så kan farverne rettes ét sted,
 hvis I senere får de præcise partner-revision.dk-koder eller vil justere
 "udskudt"-farven.
 
+## Tilstandsfarver: hover, tryk og markering
+
+Kontrollernes farver for **hover, tryk og markering** arver fra Power Apps'
+standardtema, ikke fra `Fill`/`Color`. Sætter man kun hvilende farver, blinker
+UI'et i standardtemaets lilla, så snart musen rører et element.
+
+Skift derfor app'ens tema (knappen **Tema** i værktøjslinjen) til et neutralt
+eller blåt tema, og sæt derudover eksplicit på lister og knapper:
+
+| Egenskab | Værdi |
+|---|---|
+| `SelectionFill` | `clrBrandBlaa` |
+| `SelectionColor` | `White` |
+| `HoverFill` | `ColorFade(clrBrandBlaa; 0.8)` |
+| `HoverColor` | `clrTekstPrimaer` |
+| `PressedFill` | `clrBrandBlaa` |
+| `PressedColor` | `White` |
+
+`ColorFade(farve; 0.8)` lysner farven, så hover bliver en antydning frem for
+et farveskift, mens det valgte element står i fuld blå.
+
 ## ADKAR-skinnen (signaturelement)
 
 Vandret række af 5 cirkler (A-D-K-A-R), matcher `Fase`-choicen i
