@@ -398,6 +398,7 @@ Bekræft-dialog tilføjes under Polering.
 
   | Kontrol | X / Y | B / H |
   |---|---|---|
+  | `galAfdelinger` | 40 / 382 | 400 / 376 |
   | `etiketAktiviteter` | 470 / 290 | 150 / 40 |
   | `etiketFiltrerPaaStatus` | 660 / 300 | 150 / 24 |
   | `knapRydFilter` | 830 / 300 | 80 / 24 |
