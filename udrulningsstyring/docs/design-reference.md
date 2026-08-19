@@ -138,6 +138,12 @@ eller blåt tema, og sæt derudover eksplicit på lister og knapper:
 `ColorFade(farve; 0.8)` lysner farven, så hover bliver en antydning frem for
 et farveskift, mens det valgte element står i fuld blå.
 
+**Rektangler, der kun er baggrund, skal have `HoverFill` og `PressedFill`
+sat lig `Fill`.** Et rektangel er teknisk set en klikbar kontrol og skifter
+derfor farve, når musen passerer — også når det bare er et panel eller en
+baggrundsdæmpning. Uden det blinker paneler og overlays, hver gang markøren
+bevæger sig hen over dem.
+
 ## ADKAR-skinnen (signaturelement)
 
 Vandret række af 5 cirkler (A-D-K-A-R), matcher `Fase`-choicen i
