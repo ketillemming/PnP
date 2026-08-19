@@ -240,7 +240,31 @@ Skærmens `Fill`: `clrNeutralBaggrund`
     )
     ```
 
-  - Plus et lille ADKAR-statuslys pr. række (se boks nedenfor)
+  - `Width`: `860` — bred nok til at rumme mini-skinnen til højre i rækken
+  - **Mini-ADKAR pr. række**: fem cirkler med bogstav ovenpå, indsat direkte
+    i rækken frem for som et indlejret galleri. Et galleri i et galleri gør
+    det uklart, hvad `ThisItem` peger på.
+
+    | Kontrol | X | Y | B / H |
+    |---|---|---|---|
+    | `shpMiniA` … `shpMiniR` | 700, 730, 760, 790, 820 | 14 | 20 / 20 |
+    | `lblMiniA` … `lblMiniR` | samme X som cirklen | 14 | 20 / 20 |
+
+    Cirklens `Fill` (her for Awareness — de fire andre er identiske med
+    `Desire`, `Knowledge`, `Ability`, `Reinforcement` indsat begge steder):
+
+    ```
+    With({ialt: CountRows(Filter(Aktiviteter; Projekt.Projekt = ThisItem.Projekt; Fase = 'ADKARfaser'.Awareness))};
+      If(ialt = 0;
+         clrNeutralKant;
+         ColorFade(clrBrandGroen; 1 - CountRows(Filter(Aktiviteter; Projekt.Projekt = ThisItem.Projekt; Fase = 'ADKARfaser'.Awareness; Aktivitetsstatus = [@'Aktivitetsstatus'].Gennemført)) / ialt)))
+    ```
+
+    Bogstaverne er fast tekst (`"A"`, `"D"`, …), ikke udledt af fasenavnet:
+    rækkefølgen ligger fast her, i modsætning til skinnen på projektsiden,
+    hvor den kommer fra data. Alle fem i `clrBrandGroenMoerk`, som er læsbar
+    både på en næsten hvid og en fuldt grøn cirkel. Etiketterne skal
+    **flyttes forrest**, ellers ligger de bag cirklerne.
   - `OnSelect` på skabelonen:
     `Set(varValgtProjekt; ThisItem);; Navigate(scrProjekt)`
 
@@ -316,7 +340,31 @@ Skærmens `Fill`: `clrNeutralBaggrund`
     )
     ```
 
-  - Plus et lille ADKAR-statuslys pr. række (se boks nedenfor)
+  - `Width`: `860` — bred nok til at rumme mini-skinnen til højre i rækken
+  - **Mini-ADKAR pr. række**: fem cirkler med bogstav ovenpå, indsat direkte
+    i rækken frem for som et indlejret galleri. Et galleri i et galleri gør
+    det uklart, hvad `ThisItem` peger på.
+
+    | Kontrol | X | Y | B / H |
+    |---|---|---|---|
+    | `shpMiniA` … `shpMiniR` | 700, 730, 760, 790, 820 | 14 | 20 / 20 |
+    | `lblMiniA` … `lblMiniR` | samme X som cirklen | 14 | 20 / 20 |
+
+    Cirklens `Fill` (her for Awareness — de fire andre er identiske med
+    `Desire`, `Knowledge`, `Ability`, `Reinforcement` indsat begge steder):
+
+    ```
+    With({ialt: CountRows(Filter(Aktiviteter; Projekt.Projekt = ThisItem.Projekt; Fase = 'ADKARfaser'.Awareness))};
+      If(ialt = 0;
+         clrNeutralKant;
+         ColorFade(clrBrandGroen; 1 - CountRows(Filter(Aktiviteter; Projekt.Projekt = ThisItem.Projekt; Fase = 'ADKARfaser'.Awareness; Aktivitetsstatus = [@'Aktivitetsstatus'].Gennemført)) / ialt)))
+    ```
+
+    Bogstaverne er fast tekst (`"A"`, `"D"`, …), ikke udledt af fasenavnet:
+    rækkefølgen ligger fast her, i modsætning til skinnen på projektsiden,
+    hvor den kommer fra data. Alle fem i `clrBrandGroenMoerk`, som er læsbar
+    både på en næsten hvid og en fuldt grøn cirkel. Etiketterne skal
+    **flyttes forrest**, ellers ligger de bag cirklerne.
   - `OnSelect` på skabelonen:
     `Set(varValgtProjekt; ThisItem);; Navigate(scrProjekt)`
 
