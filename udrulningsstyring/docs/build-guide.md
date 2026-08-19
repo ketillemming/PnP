@@ -385,9 +385,28 @@ Bekræft-dialog tilføjes under Polering.
   - "+ Tilføj afdeling"-knap → tekstinput +
     `Patch(Afdelinger; Defaults(Afdelinger); {Navn: txtNyAfdeling.Text; Projekt: varValgtProjekt})`
   - Fjern-ikon pr. række → `Remove(Afdelinger; ThisItem)` (med en bekræft-dialog, se Polering)
-- **Filtre** (tre dropdowns/comboboxes over aktivitetstabellen): Fase,
-  Afdeling, Status. Gem valg i `varFaseFilter` (deles med ADKAR-skinnen),
-  `varAfdelingFilter`, `varStatusFilter`.
+- **Filtre** — tre filtre, der virker uafhængigt og kan kombineres:
+  - **Fase**: klik på en cirkel i ADKAR-skinnen (`varFaseFilter`).
+  - **Afdeling**: klik på en række i `galAfdelinger` (`varAfdelingFilter`).
+    Afdelingslisten er altså også afdelingsfilteret — samme klik-mønster som
+    skinnen, og ingen ekstra kontrol. Den valgte række markeres via
+    `TemplateFill`.
+  - **Status**: `lstFilterStatus` (`varStatusFilter`), med en ryd-knap ved
+    siden af, da et listefelt ikke kan fravælges ved at klikke igen.
+
+  Faktiske placeringer på `scrProjekt`:
+
+  | Kontrol | X / Y | B / H |
+  |---|---|---|
+  | `etiketAktiviteter` | 470 / 290 | 150 / 40 |
+  | `etiketFiltrerPaaStatus` | 660 / 300 | 150 / 24 |
+  | `knapRydFilter` | 830 / 300 | 80 / 24 |
+  | `lstFilterStatus` | 660 / 326 | 250 / 44 |
+  | `galAktiviteter` | 470 / 382 | 856 / 376 |
+
+  Hvert filter skrives som "enten er der intet filter, eller også skal
+  værdien passe" — `IsBlank(varXFilter) || Kolonne = varXFilter` — så de tre
+  kan kombineres frit.
 - **Aktivitetstabel** (galleri eller `Edit form` i tabel-layout,
   `galAktiviteter`):
 
