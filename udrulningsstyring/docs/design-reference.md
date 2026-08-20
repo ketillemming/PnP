@@ -138,6 +138,16 @@ eller blåt tema, og sæt derudover eksplicit på lister og knapper:
 `ColorFade(farve; 0.8)` lysner farven, så hover bliver en antydning frem for
 et farveskift, mens det valgte element står i fuld blå.
 
+**Slå ombrydning fra på alle etiketter i en tabelrække.** Med ombrydning
+til bliver en lang tekst til to linjer, og etiketten centrerer sit indhold
+anderledes end nabokolonnerne — så flugter rækken ikke længere. Teksten
+klippes til gengæld af; sæt `Tooltip` til den fulde værdi, så den kan læses
+ved at holde musen over.
+
+Det samme gælder etiketter med ét ord eller tegn — fx bogstaverne i
+ADKAR-skinnen. Med ombrydning reserveres plads til en linje mere, og det
+ene tegn skubbes opad i sit felt.
+
 **Rektangler, der kun er baggrund, skal have `HoverFill` og `PressedFill`
 sat lig `Fill`.** Et rektangel er teknisk set en klikbar kontrol og skifter
 derfor farve, når musen passerer — også når det bare er et panel eller en
